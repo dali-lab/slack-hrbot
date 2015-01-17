@@ -4,6 +4,7 @@ var logfmt = require("logfmt");
 var Slack = require("slack-client");
 var request = require('request');
 var app = express();
+var port = process.env.PORT || 5000;
 var bodyParser = require('body-parser')
   app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use( bodyParser.urlencoded({ extended: true }) ); // to support URL-encoded bodies
@@ -91,3 +92,4 @@ slack.login();
 app.get('/', function(req, res) {
   res.send('Hello World!');
 });
+
