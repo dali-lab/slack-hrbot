@@ -6,7 +6,7 @@ var request = require('request');
 var app = express();
 var port = process.env.PORT || 5000;
 var bodyParser = require('body-parser')
-  app.use( bodyParser.json() );       // to support JSON-encoded bodies
+app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use( bodyParser.urlencoded({ extended: true }) ); // to support URL-encoded bodies
 var http = require('http');
 var https = require('https');
@@ -55,28 +55,24 @@ slack.on('message', function(message) {
          
          //if the message is in urgent-important
          if (type === 'message'  && channel.name === 'todos') {
-
          
          console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
-
+         
          //only flash lights if it's been 90 seconds sinse the last message
          if(message.ts - lastUrgentMessageTime > 90){
-         
-
-         
          request({
-                 url: "http://dali-lights.herokuapp.com",
-                 method: "POST",
-                 json: {text:"pulse"},
+                    url: "http://dali-lights.herokuapp.com",
+                    method: "POST",
+                    json: {text:"pulse"},
                  },
-                      function (error, response, body) {
-                      if (!error && response.statusCode == 200) {
-                      console.log(body)
-                      }
-                      }
-                      );
+                 function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                        console.log(body)
+                    }
+                 }
+                 );
          
-            console.log('!!!message in todos!!!');
+         console.log('!!!message in todos!!!');
          }
          lastUrgentMessageTime = parseFloat(time);
          }
@@ -90,8 +86,8 @@ slack.on('error', function(error) {
 slack.login();
 
 app.get('/', function(req, res) {
-  res.send('Hello World!');
-});
+        res.send('Hello World!');
+        });
 
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function() {
