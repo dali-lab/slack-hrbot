@@ -2,6 +2,7 @@
 var express = require("express");
 var logfmt = require("logfmt");
 var Slack = require("slack-client");
+var request = require('request');
 var app = express();
 var bodyParser = require('body-parser')
   app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -15,6 +16,7 @@ autoReconnect = true,
 autoMark = true;
 
 var slack = new Slack(token, autoReconnect, autoMark);
+var lastUrgentMessageTime = 0.0;
 
 slack.on('open', function() {
          
@@ -50,15 +52,32 @@ slack.on('message', function(message) {
          text = message.text,
          response = '';
          
+         //if the message is in urgent-important
+         if (type === 'message'  && channel.name === 'todos') {
+
+         
          console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
+
+         //only flash lights if it's been 90 seconds sinse the last message
+         if(message.ts - lastUrgentMessageTime > 90){
          
-         // Respond to messages with the reverse of the text received.
+
          
-         if (type === 'message') {
+         request({
+                 url: "http://dali-lights.herokuapp.com",
+                 method: "POST",
+                 json: {text:"pulse"},
+                 },
+                      function (error, response, body) {
+                      if (!error && response.statusCode == 200) {
+                      console.log(body)
+                      }
+                      }
+                      );
          
-         response = text.split('').reverse().join('');
-         channel.send(response);
-         console.log('@%s responded with "%s"', slack.self.name, response);
+            console.log('!!!message in todos!!!');
+         }
+         lastUrgentMessageTime = parseFloat(time);
          }
          });
 

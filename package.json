@@ -17,6 +17,7 @@
     "express": "^4.8.3",
     "logfmt": "^1.1.2",
     "mailchimp": "^1.1.0",
+    "request": "^2.51.0",
     "slack-client": "^1.2.2"
   }
 }
