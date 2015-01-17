@@ -1,0 +1,21 @@
+{
+  "name": "dali-lights",
+  "version": "0.0.0",
+  "description": "",
+  "main": "web.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@heroku.com:slack-mailchimp-add.git "
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.6.3",
+    "express": "^4.8.3",
+    "logfmt": "^1.1.2",
+    "mailchimp": "^1.1.0"
+  }
+}
