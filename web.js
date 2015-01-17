@@ -1,6 +1,7 @@
 // Nook Harquail
 var express = require("express");
 var logfmt = require("logfmt");
+var Slack = require("slack-client");
 var app = express();
 var bodyParser = require('body-parser')
   app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -9,42 +10,65 @@ var http = require('http');
 var https = require('https');
 app.use(logfmt.requestLogger());
 
+var token = process.env.SLACK_BOT_TOKEN, // Add a bot at https://my.slack.com/services/new/bot and copy the token here.
+autoReconnect = true,
+autoMark = true;
 
-function notifyStaff(){
-	
-//	var options2 = {
-//	  host: 'hooks.slack.com',
-//	  port: 443,
-//	  path: process.env.SLACK_WEBHOOK_URL,
-//	  method: 'POST',
-//    headers: {
-//        accept: '*/*'
-//    }
-//	};
-//	
-//	var request = https.request(options2, function(res) {
-//	  console.log('STATUS: ' + res.statusCode);
-//	  console.log('HEADERS: ' + JSON.stringify(res.headers));
-//	  res.setEncoding('utf8');
-//	  res.on('data', function (chunk) {
-//	    console.log('BODY: ' + chunk);
-//	  });
-//	});
-//	request.on('error', function(e) {
-//	  console.log('problem with request: ' + e.message);
-//	});
-//	request.write(JSON.stringify(data));
-//  // console.log(JSON.stringify(data));
-//	request.end();	
-}
+var slack = new Slack(token, autoReconnect, autoMark);
 
+slack.on('open', function() {
+         
+         var channels = [],
+         groups = [],
+         unreads = slack.getUnreadCount(),
+         key;
+         
+         for (key in slack.channels) {
+         if (slack.channels[key].is_member) {
+         channels.push('#' + slack.channels[key].name);
+         }
+         }
+         
+         for (key in slack.groups) {
+         if (slack.groups[key].is_open && !slack.groups[key].is_archived) {
+         groups.push(slack.groups[key].name);
+         }
+         }
+         
+         console.log('Welcome to Slack. You are @%s of %s', slack.self.name, slack.team.name);
+         console.log('You are in: %s', channels.join(', '));
+         console.log('As well as: %s', groups.join(', '));
+         console.log('You have %s unread ' + (unreads === 1 ? 'message' : 'messages'), unreads);
+         });
+
+slack.on('message', function(message) {
+         
+         var type = message.type,
+         channel = slack.getChannelGroupOrDMByID(message.channel),
+         user = slack.getUserByID(message.user),
+         time = message.ts,
+         text = message.text,
+         response = '';
+         
+         console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
+         
+         // Respond to messages with the reverse of the text received.
+         
+         if (type === 'message') {
+         
+         response = text.split('').reverse().join('');
+         channel.send(response);
+         console.log('@%s responded with "%s"', slack.self.name, response);
+         }
+         });
+
+slack.on('error', function(error) {
+         
+         console.error('Error: %s', error);
+         });
+
+slack.login();
 
 app.get('/', function(req, res) {
   res.send('Hello World!');
-});
-
-
-var port = Number(process.env.PORT || 5000);
-app.listen(port, function() {
-  console.log("Listening on " + port);
 });
