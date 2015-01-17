@@ -54,7 +54,7 @@ slack.on('message', function(message) {
          response = '';
          
          //if the message is in urgent-important
-         if (type === 'message'  && channel.name === 'todos') {
+         if (type === 'message'  && channel.name === 'urgent-important') {
          
          console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
          
