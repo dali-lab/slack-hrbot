@@ -88,7 +88,12 @@ slack.login();
 app.get('/', function(req, res) {
         res.send('Hello World!');
         });
-        
+  
+app.get('/trello-webhook', function(req, res) {
+                res.send('Hello Trello!');
+                console.log('body: '+req.body);
+});
+          
 app.post('/trello-webhook', function(req, res) {
         res.send('Hello World!');
         console.log('body: '+req.body);
