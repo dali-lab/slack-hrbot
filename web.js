@@ -58,7 +58,7 @@ slack.on('message', function(message) {
          
          console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
          
-         //only flash lights if it's been 90 seconds sinse the last message
+         //only flash lights if it's been 90 seconds since the last message
          if(message.ts - lastUrgentMessageTime > 90){
          request({
                     url: "http://dali-lights.herokuapp.com",
@@ -88,6 +88,11 @@ slack.login();
 app.get('/', function(req, res) {
         res.send('Hello World!');
         });
+        
+app.post('/trello-webhook', function(req, res) {
+        res.send('Hello World!');
+        console.log('body: '+req.body);
+        });        
 
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function() {
