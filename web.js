@@ -91,7 +91,7 @@ app.get('/', function(req, res) {
   
 app.get('/trello-webhook', function(req, res) {
                 res.send('Hello Trello!');
-                console.log('body: '+req.body);
+                console.log('body: '+req);
 });
           
 app.post('/trello-webhook', function(req, res) {
