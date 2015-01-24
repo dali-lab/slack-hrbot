@@ -101,18 +101,24 @@ app.get('/trello-webhook', function(req, res) {
 
 });
 
+//called by trello when cards are created
 app.post('/trello-webhook', function(req, res) {
   res.send('Hello World!');
   console.log('REQUEST POSTED\n' + JSON.stringify(req.body));
   
+  //the kind of thing that was done
   var actionType = req.body.action.type;
+  //description of thing
   var brief =  req.body.action.data.card.name;
+  //person the thing was assigned to
   var asignee = 'tim'
-  var fullName = req.body.action.memberCreator.fullName;
+  //the name of the assigner
+  var assigner = req.body.action.memberCreator.fullName;
   
   var staffGroup = slack.getGroupByName('staff');
+  //a new card was created
   if(actionType == 'createCard'){
-      var response = 'TRELLO: ' + brief + 'assigned to @' + asignee + ' by '+ fullName;
+      var response = 'TRELLO: ' + brief + 'assigned to @' + asignee + ' by '+ assigner;
       staffGroup.send(response);
   }
   
