@@ -118,7 +118,7 @@ app.post('/trello-webhook', function(req, res) {
   var staffGroup = slack.getGroupByName('staff');
   //a new card was created
   if(actionType == 'createCard'){
-      var response = 'TRELLO: ' + brief + ' assigned to <@' + asignee + '> by '+ assigner;
+      var response = brief + ' ' + ' assigned to <@' + asignee + '> by '+ assigner + '<http://trello.com/b/sliTZnbm/staff-tasks|on trello>';
       staffGroup.send(response);
   }
   
