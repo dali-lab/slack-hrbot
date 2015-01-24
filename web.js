@@ -96,7 +96,7 @@ app.get('/trello-webhook', function(req, res) {
           
 app.post('/trello-webhook', function(req, res) {
         res.send('Hello World!');
-        console.log('body: '+req.body);
+        console.log('body: '+JSON.stringify(req.body));
         });        
 
 var port = Number(process.env.PORT || 5000);
