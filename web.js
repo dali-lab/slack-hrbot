@@ -112,7 +112,7 @@ app.post('/trello-webhook', function(req, res) {
   var brief =  req.body.action.data.card.name;
   
   //board the thing was posted on
-  var boardAssignedTo = req.body.action.list.name;
+  var boardAssignedTo = req.body.action.data.list.name;
   
   //mapping of trello boards to slack users
   var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Marketing': '<@sofia.rainaldi>','Project Management': '<@tim.serkes> & <@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
