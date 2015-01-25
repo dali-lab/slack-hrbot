@@ -113,7 +113,7 @@ app.post('/trello-webhook', function(req, res) {
   
   
   //mapping of trello boards to slack users
-  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Marketing': '<@sofia.rainaldi>','Project Management': '<@tim.serkes> & <@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
+  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@sofia.rainaldi>','Project Management': '<@tim.serkes> & <@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
 
   //the name of the assigner
   var assigner = req.body.action.memberCreator.fullName;
@@ -135,7 +135,7 @@ app.post('/trello-webhook', function(req, res) {
       var destinationBoard = req.body.action.data.listAfter.name;
       //card completed
       if(destinationBoard == 'Done'){
-      var response = 'Trello card completed: _' + brief + '_ ' + + ': http://trello.com/c/'+ linky;
+      var response = 'completed: _' + brief + '_ ' + ': http://trello.com/c/'+ linky;
       staffGroup.send(response);
       }
       //card updated
