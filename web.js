@@ -125,7 +125,7 @@ app.post('/trello-webhook', function(req, res) {
   var staffGroup = slack.getGroupByName('staff');
   //a new card was created
   if(actionType == 'createCard'){
-      var response = brief + ' ' + 'assigned to ' + asignee + ': http://trello.com/c/'+ linky;
+      var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ': http://trello.com/c/'+ linky;
       staffGroup.send(response);
   }
   //card finished or updated
@@ -133,12 +133,12 @@ app.post('/trello-webhook', function(req, res) {
       var destinationBoard = req.body.action.data.listAfter.name;
       //card completed
       if(destinationBoard == 'Done'){
-      var response = brief + ' ' + 'completed!' + ': http://trello.com/c/'+ linky;
+      var response = 'Trello card completed: _' + brief + '_ ' + + ': http://trello.com/c/'+ linky;
       staffGroup.send(response);
       }
       //card updated
       else{
-        var response = 'Trello card updated: ' + ': http://trello.com/c/'+ linky;
+        var response = 'Trello card updated' + ': http://trello.com/c/'+ linky;
       }
   }
   
