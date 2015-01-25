@@ -111,14 +111,10 @@ app.post('/trello-webhook', function(req, res) {
   //description of thing
   var brief =  req.body.action.data.card.name;
   
-  //board the thing was posted on
-  var boardAssignedTo = req.body.action.data.list.name;
   
   //mapping of trello boards to slack users
   var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Marketing': '<@sofia.rainaldi>','Project Management': '<@tim.serkes> & <@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
-    
-  //person the thing was assigned to
-  var asignee = boardsAndPeople[boardAssignedTo];
+
   //the name of the assigner
   var assigner = req.body.action.memberCreator.fullName;
   //link to the card
@@ -127,8 +123,12 @@ app.post('/trello-webhook', function(req, res) {
   var staffGroup = slack.getGroupByName('staff');
   //a new card was created
   if(actionType == 'createCard'){
-      var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ': http://trello.com/c/'+ linky;
-      staffGroup.send(response);
+    //board the thing was posted on
+    var boardAssignedTo = req.body.action.data.list.name;
+    //person the thing was assigned to
+    var asignee = boardsAndPeople[boardAssignedTo];
+    var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ': http://trello.com/c/'+ linky;
+    staffGroup.send(response);
   }
   //card finished or updated
   else if(actionType == 'updateCard'){
