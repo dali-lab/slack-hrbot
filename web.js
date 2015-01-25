@@ -112,11 +112,10 @@ app.post('/trello-webhook', function(req, res) {
   var brief =  req.body.action.data.card.name;
   
   //person the thing was assigned to
-  var boardAssignedTo = '<@tim>'
-  
+  var boardAssignedTo = '';
   
   //person the thing was assigned to
-  var asignee = 'tim'
+  var asignee = '<@tim>';
   //the name of the assigner
   var assigner = req.body.action.memberCreator.fullName;
   //link to the card
