@@ -127,7 +127,7 @@ app.post('/trello-webhook', function(req, res) {
     var boardAssignedTo = req.body.action.data.list.name;
     //person the thing was assigned to
     var asignee = boardsAndPeople[boardAssignedTo];
-    var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ': http://trello.com/c/'+ linky;
+    var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ' http://trello.com/c/'+ linky;
     staffGroup.send(response);
   }
   //card finished or updated
@@ -135,12 +135,12 @@ app.post('/trello-webhook', function(req, res) {
       var destinationBoard = req.body.action.data.listAfter.name;
       //card completed
       if(destinationBoard == 'Done'){
-      var response = 'completed: _' + brief + '_ ' + ': http://trello.com/c/'+ linky;
+      var response = 'completed: _' + brief + '_ ' + ' http://trello.com/c/'+ linky;
       staffGroup.send(response);
       }
       //card updated
       else{
-        var response = 'Trello card updated' + ': http://trello.com/c/'+ linky;
+        var response = 'Trello card updated' + ' http://trello.com/c/'+ linky;
       }
   }
   
