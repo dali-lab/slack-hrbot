@@ -114,12 +114,27 @@ app.post('/trello-webhook', function(req, res) {
   var asignee = 'tim'
   //the name of the assigner
   var assigner = req.body.action.memberCreator.fullName;
+  //link to the card
+  var linky = req.body.action.data.card.shortLink;
   
   var staffGroup = slack.getGroupByName('staff');
   //a new card was created
   if(actionType == 'createCard'){
-      var response = brief + ' ' + 'assigned to <@' + asignee + '>' + '\nhttp://trello.com/b/sliTZnbm/staff-tasks';
+      var response = brief + ' ' + 'assigned to <@' + asignee + '>' + '\nhttp://trello.com/c/'+ linky;
       staffGroup.send(response);
+  }
+  //card finished or updated
+  else if(actionType == 'updateCard'){
+      var destinationBoard = eq.body.action.data.listAfter.name;
+      //card completed
+      if(destinationBoard == 'Done'){
+      var response = brief + ' ' + 'completed!' + '\nhttp://trello.com/c/'+ linky;
+      staffGroup.send(response);
+      }
+      //card updated
+      else{
+        var response = 'Trello card updated: ' + '\nhttp://trello.com/c/'+ linky;
+      }
   }
   
 });
