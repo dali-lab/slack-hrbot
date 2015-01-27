@@ -130,7 +130,7 @@ app.post('/trello-webhook', function(req, res) {
     
     function taskassignedToBoard(board) {
       //person the thing was assigned to
-      var asignee = boardsAndPeople[boardAssignedTo];
+      var asignee = boardsAndPeople[board];
       var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ' \nhttp://trello.com/c/'+ linky;
       staffGroup.send(response);
     }
