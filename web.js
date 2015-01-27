@@ -113,9 +113,9 @@ app.post('/trello-webhook', function(req, res) {
   
   
   //mapping of trello boards to slack users
-  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@sofia.rainaldi>','Project Management1': '<@tim.serkes>','Project Management2':'<@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
+  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@D03BWKAJA>','Project Management1': '<@tim.serkes>','Project Management2':'<@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
          
-  var TrelloNamesAndPeople = {'Tim Tregubov': '<@tim>','Lorie Loeb': '<@lorie>','Sean Oh': '<@sean.oh>','Kaitlin Maier': '<@kaitlin>','Alison Leung': '<@alisonleung>','Sofia Rainaldi': '<@sofia.rainaldi>','Tim Serkes': '<@tim.serkes>','Matt Stanton': '<@mattstanton>','Nook Harquail': '<@nook>','Marissa Allen': '<@marissa>','Runi Goswami': '<@runi>','Mentor Tasks': 'mentors'};
+  var TrelloNamesAndPeople = {'Tim Tregubov': '<@tim>','Lorie Loeb': '<@lorie>','Sean Oh': '<@sean.oh>','Kaitlin Maier': '<@kaitlin>','Alison Leung': '<@alisonleung>','Sofia Rainaldi': '<@D03BWKAJA>','Tim Serkes': '<@tim.serkes>','Matt Stanton': '<@mattstanton>','Nook Harquail': '<@nook>','Marissa Allen': '<@marissa>','Runi Goswami': '<@runi>','Mentor Tasks': 'mentors'};
 
   //the name of the assigner
   var assigner = req.body.action.memberCreator.fullName;
