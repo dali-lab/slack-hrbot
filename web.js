@@ -113,9 +113,9 @@ app.post('/trello-webhook', function(req, res) {
   
   
   //mapping of trello boards to slack users
-  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@D03BWKAJA|sofia>','Project Management1': '<@tim"."serkes>','Project Management2':'<@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
+  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@sofia>','Project Management':'<@sean> & <@tims>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
          
-  var TrelloNamesAndPeople = {'Tim Tregubov': '<@tim>','Lorie Loeb': '<@lorie>','Sean Oh': '<@sean.oh>','Kaitlin Maier': '<@kaitlin>','Alison Leung': '<@alisonleung>','Sofia Rainaldi': '<@sofia>','Tim Serkes': '<@tim.serkes>','Matt Stanton': '<@mattstanton>','Nook Harquail': '<@nook>','Marissa Allen': '<@marissa>','Runi Goswami': '<@runi>','Mentor Tasks': 'mentors'};
+  var TrelloNamesAndPeople = {'Tim Tregubov': '<@tim>','Lorie Loeb': '<@lorie>','Sean Oh': '<@sean>','Kaitlin Maier': '<@kaitlin>','Alison Leung': '<@alisonleung>','Sofia Rainaldi': '<@sofia>','Tim Serkes': '<@tims>','Matt Stanton': '<@mattstanton>','Nook Harquail': '<@nook>','Marissa Allen': '<@marissa>','Runi Goswami': '<@runi>','Mentor Tasks': 'mentors'};
 
   //the name of the assigner
   var assigner = req.body.action.memberCreator.fullName;
@@ -135,13 +135,13 @@ app.post('/trello-webhook', function(req, res) {
       staffGroup.send(response);
     }
                                                                                                                          
-    if(boardAssignedTo == 'Project Management'){
-      taskassignedToBoard('Project Management1');
-      taskassignedToBoard('Project Management2');
-    }
-    else{
+    // if(boardAssignedTo == 'Project Management'){
+    //   taskassignedToBoard('Project Management1');
+    //   taskassignedToBoard('Project Management2');
+    // }
+    // else{
       taskassignedToBoard(boardAssignedTo);
-    }                                                                                                                                                               
+    // }       
   }
   //card finished or updated
   else if(actionType == 'updateCard'){
