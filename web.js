@@ -137,7 +137,7 @@ app.post('/trello-webhook', function(req, res) {
       var destinationBoard = req.body.action.data.listAfter.name;
       //card completed
       if(destinationBoard == 'Done'){
-      var response = 'completed by '+assigner+': _' + brief + '_ ' + ' \nhttp://trello.com/c/'+ linky;
+      var response = 'completed by '+TrelloNamesAndPeople[assigner]+': _' + brief + '_ ' + ' \nhttp://trello.com/c/'+ linky;
       staffGroup.send(response);
       }
       //card updated
