@@ -113,7 +113,7 @@ app.post('/trello-webhook', function(req, res) {
   
   
   //mapping of trello boards to slack users
-  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@sofia.rainaldi>','Project Management': '<@tim.serkes @sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
+  var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@sofia.rainaldi>','Project Management1': '<@tim.serkes>','Project Management2':'<@sean.oh>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
          
   var TrelloNamesAndPeople = {'Tim Tregubov': '<@tim>','Lorie Loeb': '<@lorie>','Sean Oh': '<@sean.oh>','Kaitlin Maier': '<@kaitlin>','Alison Leung': '<@alisonleung>','Sofia Rainaldi': '<@sofia.rainaldi>','Tim Serkes': '<@tim.serkes>','Matt Stanton': '<@mattstanton>','Nook Harquail': '<@nook>','Marissa Allen': '<@marissa>','Runi Goswami': '<@runi>','Mentor Tasks': 'mentors'};
 
@@ -127,10 +127,21 @@ app.post('/trello-webhook', function(req, res) {
   if(actionType == 'createCard'){
     //board the thing was posted on
     var boardAssignedTo = req.body.action.data.list.name;
-    //person the thing was assigned to
-    var asignee = boardsAndPeople[boardAssignedTo];
-    var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ' \nhttp://trello.com/c/'+ linky;
-    staffGroup.send(response);
+    
+    function taskassignedToBoard(board) {
+      //person the thing was assigned to
+      var asignee = boardsAndPeople[boardAssignedTo];
+      var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ' \nhttp://trello.com/c/'+ linky;
+      staffGroup.send(response);
+    }
+                                                                                                                         
+    if(boardAssignedTo == 'Project Management'){
+      taskassignedToBoard('Project Management1');
+      taskassignedToBoard('Project Management2');
+    }
+    else{
+      taskassignedToBoard(boardAssignedTo);
+    }                                                                                                                                                               
   }
   //card finished or updated
   else if(actionType == 'updateCard'){
