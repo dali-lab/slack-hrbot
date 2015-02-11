@@ -160,7 +160,11 @@ else if(actionType == 'updateCard'){
 
 //called by trello when cards are created
 app.post('/trello-webhook-mn', function(req, res) {
+         
+         
+         res.statusCode = 410;
          res.send('Hello World!');
+         
          console.log('REQUEST POSTED\n' + JSON.stringify(req.body));
          
          //the kind of thing that was done
