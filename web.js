@@ -101,6 +101,7 @@ console.log(req);
 
 });
 
+
 //called by trello when cards are created
 app.post('/trello-webhook', function(req, res) {
 res.send('Hello World!');
@@ -155,6 +156,14 @@ else if(actionType == 'updateCard'){
 }
   
 });
+
+app.get('/trello-webhook-mn', function(req, res) {
+         
+         res.send('Hello Trello!');
+         
+         console.log(req);
+         
+         });
 
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function() {
