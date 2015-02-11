@@ -179,7 +179,7 @@ app.post('/trello-webhook-mn', function(req, res) {
          //link to the card
          var linky = req.body.action.data.card.shortLink;
          
-         var staffGroup = slack.getGroupByName('staff');
+         var mnGroup = slack.getGroupByName('mn');
          //a new card was created
          if(actionType == 'createCard'){
          //board the thing was posted on
@@ -193,7 +193,7 @@ app.post('/trello-webhook-mn', function(req, res) {
 //         }
          //underscores make it italics
          var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ' \nhttp://trello.com/c/'+ linky;
-         staffGroup.send(response);
+         mnGroup.send(response);
          }
          taskassignedToBoard(boardAssignedTo);
          }
@@ -203,7 +203,7 @@ app.post('/trello-webhook-mn', function(req, res) {
          //card completed
          if(destinationBoard == 'Done'){
          var response = 'completed by '+TrelloNamesAndPeople[assigner]+': _' + brief + '_ ' + ' \nhttp://trello.com/c/'+ linky;
-         staffGroup.send(response);
+         mnGroup.send(response);
          }
          //card updated
          else{
