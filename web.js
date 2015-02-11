@@ -162,7 +162,7 @@ else if(actionType == 'updateCard'){
 app.post('/trello-webhook-mn', function(req, res) {
          
          
-         res.statusCode = 410;
+//         res.statusCode = 410;
          res.send('Hello World!');
          
          console.log('REQUEST POSTED\n' + JSON.stringify(req.body));
