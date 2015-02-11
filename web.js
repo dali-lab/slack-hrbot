@@ -157,6 +157,62 @@ else if(actionType == 'updateCard'){
   
 });
 
+
+//called by trello when cards are created
+app.post('/trello-webhook-mn', function(req, res) {
+         res.send('Hello World!');
+         console.log('REQUEST POSTED\n' + JSON.stringify(req.body));
+         
+         //the kind of thing that was done
+         var actionType = req.body.action.type;
+         //description of thing
+         var brief =  req.body.action.data.card.name;
+         
+         
+         //mapping of trello boards to slack users
+//         var boardsAndPeople = {'Technical Director': '<@tim>','Administrations': '<@kaitlin>','Lead Designer': '<@alisonleung>','Marketing': '<@sofia>','Project Management':'<@sean> & <@tim_serkes>','Digital Arts Apprentice': '<@mattstanton>','Mentor Tasks': 'mentors'};
+         //mapping of trello usernames to slack usernames
+         var TrelloNamesAndPeople = {'Tim Tregubov': '<@tim>','Lorie Loeb': '<@lorie>','Sean Oh': '<@sean>','Kaitlin Maier': '<@kaitlin>','Alison Leung': '<@alisonleung>','Sofia Rainaldi': '<@sofia>','Tim Serkes': '<@tim_serkes>','Matt Stanton': '<@mattstanton>','Nook Harquail': '<@nook>','Marissa Allen': '<@marissa>','Runi Goswami': '<@runi>','Mentor Tasks': 'mentors'};
+         
+         //the name of the assigner
+         var assigner = req.body.action.memberCreator.fullName;
+         //link to the card
+         var linky = req.body.action.data.card.shortLink;
+         
+         var staffGroup = slack.getGroupByName('staff');
+         //a new card was created
+         if(actionType == 'createCard'){
+         //board the thing was posted on
+         var boardAssignedTo = req.body.action.data.list.name;
+         
+         function taskassignedToBoard(board) {
+         //person the thing was assigned to
+         var asignee = board;
+//         if(!asignee){
+//         asignee = board;
+//         }
+         //underscores make it italics
+         var response = '_' + brief + '_ ' + 'assigned to ' + asignee + ' \nhttp://trello.com/c/'+ linky;
+         staffGroup.send(response);
+         }
+         taskassignedToBoard(boardAssignedTo);
+         }
+         //card finished or updated
+         else if(actionType == 'updateCard'){
+         var destinationBoard = req.body.action.data.listAfter.name;
+         //card completed
+         if(destinationBoard == 'Done'){
+         var response = 'completed by '+TrelloNamesAndPeople[assigner]+': _' + brief + '_ ' + ' \nhttp://trello.com/c/'+ linky;
+         staffGroup.send(response);
+         }
+         //card updated
+         else{
+         var response = 'Trello card updated' + ' \nhttp://trello.com/c/'+ linky;
+         }
+         }
+         
+         });
+
 app.get('/trello-webhook-mn', function(req, res) {
          
          res.send('Hello Trello!');
