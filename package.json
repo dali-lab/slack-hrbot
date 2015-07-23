@@ -1,23 +1,25 @@
 {
-  "name": "dali-lights",
+  "name": "dali-hours",
   "version": "0.0.0",
   "description": "",
   "main": "web.js",
   "scripts": {
+    "start": "./node_modules/.bin/supervisor web.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@heroku.com:slack-mailchimp-add.git "
+    "url": "git@heroku.com:dali-hours.git "
   },
-  "author": "",
+  "author": "Tim Tregubov",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.6.3",
-    "express": "^4.8.3",
-    "logfmt": "^1.1.2",
-    "mailchimp": "^1.1.0",
-    "request": "^2.51.0",
-    "slack-client": "^1.2.2"
+    "body-parser": "^1.13.2",
+    "express": "^4.13.1",
+    "google-spreadsheet": "^1.0.1",
+    "logfmt": "^1.2.0",
+    "request": "^2.59.0",
+    "slack-client": "^1.4.1",
+    "supervisor": "^0.7.1"
   }
 }
