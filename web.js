@@ -4,6 +4,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var Slack = require("slack-client");
 var request = require('request');
+var moment = require('moment');
 var GoogleSpreadsheet = require("google-spreadsheet");
 var app = express();
 var port = process.env.PORT || 5000;
@@ -30,6 +31,7 @@ var spreadsheet = new GoogleSpreadsheet('1eR_YVageutlLK03ZKeLeKL82eZE-ksSO-PS4pp
 // }
 var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
 var currentTerm = '15s'; // default at start
+var currentWeek = 0; //default
 
 var makeMention = function(userId) {
   return '<@' + userId + '>';
@@ -57,6 +59,31 @@ var getOnlineHumansForChannel = function(channel) {
 //     else resolve(res);
 //   });
 // });
+// var promise = new Y.Promise(function (fulfill, reject) {
+//     Y.jsonp(url, function (res) {
+//         var meta = res.meta,
+//             data = res.data;
+//
+//         // Check for a successful response, otherwise reject the
+//         // promise with the message returned by the GitHub API.
+//         if (meta.status >= 200 && meta.status < 300) {
+//             fulfill(data);
+//         } else {
+//             reject(new Error(data.message));
+//         }
+//     });
+//
+//     // Add a timeout in case the URL is completely wrong
+//     // or GitHub is too busy
+//     setTimeout(function () {
+//         // Once a promise has been fulfilled or rejected it will never
+//         // change its state again, so we can safely call reject() after
+//         // some time. If it was already fulfilled or rejected, nothing will
+//         // happen
+//         reject(new Error('Timeout'));
+//     }, 10000);
+// });
+
 
 
 // this connects to the spreadsheet and gets the configs
@@ -70,7 +97,16 @@ var getHRConfigs = function() {
       })[0] || sheet_info.worksheets[0];
       // gets the rows and config values
       config_sheet.getRows(function(err, rows) {
-        currentTerm = rows[0].currentterm;
+        for (var i in rows) {
+          var now = moment();
+          var s = moment(rows[i].start, "MM/DD/YYYY");
+          var e = moment(rows[i].end, "MM/DD/YYYY");
+          if (now.isBetween(s, e)) {
+            currentTerm = rows[i].term;
+            currentWeek = now.diff(s, 'weeks');
+            console.log("currentWeek: " + currentWeek + ", currentTerm: " + currentTerm);
+          }
+        }
       });
     });
   })

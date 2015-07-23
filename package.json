@@ -18,6 +18,7 @@
     "express": "^4.13.1",
     "google-spreadsheet": "^1.0.1",
     "logfmt": "^1.2.0",
+    "moment": "^2.10.3",
     "request": "^2.59.0",
     "slack-client": "^1.4.1",
     "supervisor": "^0.7.1"
