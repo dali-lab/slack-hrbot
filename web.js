@@ -23,16 +23,24 @@ var token = process.env.SLACK_BOT_TOKEN, // Add a bot at https://my.slack.com/se
 var slack = new Slack(token, autoReconnect, autoMark);
 var currentTerm = '15s'; // default at start
 var currentWeek = 0; //default
+var currentMembers = [];
+var currentGroups = [];
+var currentChannels = [];
 
 var makeMention = function(userId) {
-  return '<@' + userId + '>';
+  return '@' + userId;
 };
 
 var isDirect = function(userId, messageText) {
   var userTag = makeMention(userId);
+  // console.log('msg:'+messageText);
+  // console.log('usertage:'+userTag);
+  // console.log('other: ' + messageText.substr(0, userTag.length));
+  // console.log('count:' + messageText.length);
+  // console.log('count2:' + userTag.length);
   return messageText &&
     messageText.length >= userTag.length &&
-    messageText.substr(0, userTag.length) === userTag;
+    messageText.substr(0, userTag.length) == userTag;
 };
 
 var getHumansForChannel = function(channel) {
@@ -53,7 +61,7 @@ var getOnlineHumansForChannel = function(channel) {
 slack.on('open', function() {
   var unreads = slack.getUnreadCount();
 
-  var channels = Object.keys(slack.channels)
+  channels = Object.keys(slack.channels)
     .map(function(k) {
       return slack.channels[k];
     })
@@ -64,7 +72,7 @@ slack.on('open', function() {
       return c.name;
     });
 
-  var groups = Object.keys(slack.groups)
+  groups = Object.keys(slack.groups)
     .map(function(k) {
       return slack.groups[k];
     })
@@ -75,7 +83,7 @@ slack.on('open', function() {
       return g.name;
     });
 
-  var currentMembers = getHumansForChannel(slack.getGroupByName(currentTerm))
+  currentMembers = getHumansForChannel(slack.getGroupByName(currentTerm))
     .filter(function(human) {
       return human.name != slack.self.name;
     })
@@ -103,16 +111,20 @@ slack.on('message', function(message) {
   var trimmed = message.text.substr(makeMention(slack.self.id).length).trim(),
   trimmed = trimmed.replace(/^:/, '');
 
-  console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
+  console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, trimmed);
 
-  if (message.type === 'message' && isDirect(slack.self.id, message.text)) {
-    console.log('contacted: ' + channel.name + ':' + user.name + ':' + message.text);
-    channel.send(trimmed);
+  //TODO: check for isDIrect in some way
+  if (type == 'message' ) {
+    console.log('contacted: ' + channel.name + ':' + user.name + ':' + trimmed);
+    var anum = message.text.match( /\d+/g );
+    console.log(anum);
+    if (anum && anum.length>0) {
+        channel.send("You're saying you worked *"+anum[0]+"* hours last week?");
+    } else {
+      channel.send("What? I'm simple, I only understand numbers.");
+    }
   }
 
-  if (type == 'message') {
-
-  }
 });
 
 slack.on('error', function(error) {
@@ -138,9 +150,15 @@ app.get('/', function(req, res) {
 
 app.get('/test', function(req, res) {
   //var ret = spreadsheets.test();
-  for (member in currentMembers) {
+  currentMembers.forEach(function(member) {
     console.log(member);
-  }
+    var s = slack.getDMByName(member);
+    if (s) {
+      s.send('how many hours did you work this past week?');
+    } else {
+      console.log("couldn't dm: ", member);
+    }
+  });
 
 
   res.send('testing complete');
