@@ -98,9 +98,10 @@ slack.on('message', function(message) {
     user = slack.getUserByID(message.user),
     time = message.ts,
     text = message.text,
-    trimmed = message.text.substr(makeMention(slack.self.id).length).trim();
+    response = '';
+
+  var trimmed = message.text.substr(makeMention(slack.self.id).length).trim(),
   trimmed = trimmed.replace(/^:/, '');
-  response = '';
 
   console.log('Received: %s %s @%s %s "%s"', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
@@ -125,7 +126,7 @@ spreadsheets.getHRConfigs().then(function(configs) {
   currentTerm = configs.currentTerm;
   currentWeek = configs.currentWeek;
   slack.login();
-}).catch(function(err){
+}).catch(function(err) {
   console.log(err);
 });
 
@@ -136,8 +137,13 @@ app.get('/', function(req, res) {
 });
 
 app.get('/test', function(req, res) {
-  var ret = spreadsheets.test();
-  res.send(ret);
+  //var ret = spreadsheets.test();
+  for (member in currentMembers) {
+    console.log(member);
+  }
+
+
+  res.send('testing complete');
 });
 
 

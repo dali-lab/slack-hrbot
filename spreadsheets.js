@@ -52,31 +52,31 @@ var Spreadsheets = {
   getHRConfigs: function() {
     var self = this;
     return this.getAuth()
-    .then(function(){
-      return self.getSpreadSheet('CONFIGS');
-    })
-    .then(function(sheet) {
-      return new Promise(function(fulfill, reject) {
-        config = {}
-        sheet.getRows(function(err, rows) {
-          if (err) {
-            reject(err);
-          } else {
-            for (var i in rows) {
-              var now = moment();
-              var s = moment(rows[i].start, "MM/DD/YYYY");
-              var e = moment(rows[i].end, "MM/DD/YYYY");
-              if (now.isBetween(s, e)) {
-                config.currentTerm = rows[i].term;
-                config.currentWeek = now.diff(s, 'weeks');
-                console.log("currentWeek: " + config.currentWeek + ", currentTerm: " + config.currentTerm);
+      .then(function() {
+        return self.getSpreadSheet('CONFIGS');
+      })
+      .then(function(sheet) {
+        return new Promise(function(fulfill, reject) {
+          config = {}
+          sheet.getRows(function(err, rows) {
+            if (err) {
+              reject(err);
+            } else {
+              for (var i in rows) {
+                var now = moment();
+                var s = moment(rows[i].start, "MM/DD/YYYY");
+                var e = moment(rows[i].end, "MM/DD/YYYY");
+                if (now.isBetween(s, e)) {
+                  config.currentTerm = rows[i].term;
+                  config.currentWeek = now.diff(s, 'weeks');
+                  console.log("currentWeek: " + config.currentWeek + ", currentTerm: " + config.currentTerm);
+                }
               }
+              fulfill(config);
             }
-            fulfill(config);
-          }
+          });
         });
       });
-    });
   },
 
   addRowToSheet: function(data, sheet) {
@@ -99,7 +99,9 @@ var Spreadsheets = {
         if (err) {
           reject(err);
         } else {
-          var row = _.find(rows, function(r){ return r.username == username; });
+          var row = _.find(rows, function(r) {
+            return r.username == username;
+          });
           if (row) {
             fulfill(row);
           } else {
@@ -113,8 +115,12 @@ var Spreadsheets = {
   logUncaught: function(username, msg) {
     var self = this;
     this.getSpreadSheet('uncaught').then(function(sheet) {
-      return self.addRowToSheet( { 'username': username, 'date': moment().format("dddd, MMMM Do YYYY, h:mm:ss a"), 'message': msg}, sheet);
-    }).catch(function(err){
+      return self.addRowToSheet({
+        'username': username,
+        'date': moment().format("dddd, MMMM Do YYYY, h:mm:ss a"),
+        'message': msg
+      }, sheet);
+    }).catch(function(err) {
       console.log("logging failed: %s", err);
     });
   },
@@ -138,8 +144,8 @@ var Spreadsheets = {
       return self.getRowByUsername(sheet, username);
     }).then(function(row) {
       var weeks = weekKeys();
-      var i = weeks.length-1;
-      while (i >= 0 && row[weeks[i]] == '' ) {
+      var i = weeks.length - 1;
+      while (i >= 0 && row[weeks[i]] == '') {
         i--;
       }
       console.log('last week filed: %s, for hrs: %s', weeks[i], row[weeks[i]]);
@@ -147,46 +153,9 @@ var Spreadsheets = {
   },
 
   test: function() {
-      this.updateWeekHours('tim', 12, 4, '15x');
-
-
-    // spreadsheet.useServiceAccountAuth(google_creds, function(err) {
-    //   // getInfo returns info about the sheet and an array or "worksheet" objects
-    //   spreadsheet.getInfo(function(err, sheet_info) {
-    //     console.log(sheet_info.title + ' is loaded');
-    //     // use worksheet object if you want to stop using the # in your calls
-    //     console.log(sheet_info.worksheets);
-    //     var sheet1 = sheet_info.worksheets[0];
-    //     console.log(sheet1.colCount);
-    //     sheet1.getRows(function(err, rows) {
-    //       console.log(Object.keys(rows[0]));
-    //     });
-    //     // var sheet1 = sheet_info.worksheets[0];
-    //     // sheet1.getRows( function( err, rows ){
-    //     //     rows[0].colname = 'new val';
-    //     //     rows[0].save(); //async and takes a callback
-    //     //     rows[0].del();  //async and takes a callback
-    //     // });
-    //   });
-    //
-    //   // // column names are set by google and are based
-    //   // // on the header row (first row) of your sheet
-    //   // spreadsheet.addRow( 2, { colname: 'col value'} );
-    //   //
-    //   // spreadsheet.getRows( 2, {
-    //   //     start: 100,          // start index
-    //   //     num: 100,              // number of rows to pull
-    //   //     orderby: 'name'  // column to order results by
-    //   // }, function(err, row_data){
-    //   //     // do something...
-    //   // });
-    // })
+    this.updateWeekHours('tim', 12, 4, '15x');
 
   },
-
-
-
-
 
 
 }
@@ -207,7 +176,7 @@ var saveRow = function(row) {
 }
 
 var weekFormat = function(week) {
-  return "week"+week;
+  return "week" + week;
 }
 
 var weekKeys = function() {
