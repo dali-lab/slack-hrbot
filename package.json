@@ -20,7 +20,9 @@
     "logfmt": "^1.2.0",
     "moment": "^2.10.3",
     "request": "^2.59.0",
+    "schedulejs": "^0.6.3",
     "slack-client": "^1.4.1",
-    "supervisor": "^0.7.1"
+    "supervisor": "^0.7.1",
+    "underscore": "^1.8.3"
   }
 }
