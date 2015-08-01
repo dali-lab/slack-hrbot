@@ -105,7 +105,7 @@ var Spreadsheets = {
           if (row) {
             fulfill(row);
           } else {
-            reject(new Error('no row found with username: %s', username));
+            reject(new Error('no row found with username: ' + username));
           }
         }
       })
@@ -127,13 +127,25 @@ var Spreadsheets = {
 
   updateWeekHours: function(username, hours, week, term) {
     var self = this;
+    var spreadsheet;
     this.getSpreadSheet(term).then(function(sheet) {
-      return self.getRowByUsername(sheet, username);
+      spreadsheet = sheet;
+      return self.getRowByUsername(spreadsheet, username);
+    }).catch(function(err) {
+      // if the user isn't in the spreadsheet yet need to add first
+      return self.addRowToSheet({'username': username},spreadsheet)
+        .then(function(){
+          // retry getting the row by username
+          return self.getRowByUsername(spreadsheet, username);
+        });
     }).then(function(row) {
+      // now we have row set the weeks
       row[weekFormat(week)] = hours;
       return saveRow(row);
     }).catch(function(err) {
-      console.log(err);
+      var msg = 'updateWeekHours error: ' + err;
+      console.log(msg);
+      self.logUncaught(username, msg)
     });
 
   },
