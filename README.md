@@ -1,3 +1,6 @@
-slack-urgent-important-pulse
+slack-hrbot
 =========
-pulses the lights when a message is posted on urgent important
+
+asks lab members how many hours they've worked and keeps track of responses in a google spreadsheet
+
+
