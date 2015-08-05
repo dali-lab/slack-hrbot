@@ -152,6 +152,9 @@ slack.on('message', function(message) {
     text = message.text,
     response = '';
 
+  // in some cases may not be able to get user?
+  if (!user) { user = channel};
+
   console.log('Received: %s %s %s %s %s', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
   var atme = isAtMention(slack.self.id, text);
