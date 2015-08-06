@@ -149,7 +149,7 @@ slack.on('message', function(message) {
     channel = slack.getChannelGroupOrDMByID(message.channel),
     user = slack.getUserByID(message.user),
     time = message.ts,
-    text = message.text,
+    text = ( message.text ) ? message.text : "",
     response = '';
 
   // in some cases may not be able to get user?
