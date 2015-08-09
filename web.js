@@ -199,7 +199,7 @@ slack.on('message', function(message) {
         currentState[user.name] = { lastcontact: moment(), confirmed: false, amount: amount}
       }
     } else if ( words.indexOf('yes') >=0 || words.indexOf('y') >=0) {
-      if (contactIsStale || !currentState[user.name].amount) {
+      if (contactIsStale || currentState[user.name].amount === undefined) {
         channel.send("I've forgotten that we were talking, how much should I put down for hours worked?");
       } else {
         spreadsheets.updateWeekHours(user.name, currentState[user.name].amount, currentWeek, currentTerm)
