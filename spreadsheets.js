@@ -1,12 +1,15 @@
 // promisifyed spreadsheets
 var GoogleSpreadsheet = require("google-spreadsheet");
 var moment = require('moment');
-// var google_creds = {
-//   client_email: process.env.CLIENT_EMAIL,
-//   private_key: process.env.PRIVATE_KEY
-// }
+var google_creds = {
+   "client_email": process.env.CLIENT_EMAIL,
+   "private_key": process.env.PRIVATE_KEY,
+   "client_id": process.env.CLIENT_ID,
+   "private_key_id": process.env.PRIVATE_KEY_ID,
+   "type": process.env.TYPE
+ }
 var spreadsheet = new GoogleSpreadsheet('1eR_YVageutlLK03ZKeLeKL82eZE-ksSO-PS4ppJFjp8');
-var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
+//var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
 var _ = require('underscore');
 
 
