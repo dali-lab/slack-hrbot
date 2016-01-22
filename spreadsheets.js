@@ -12,12 +12,11 @@ var spreadsheet = new GoogleSpreadsheet('1eR_YVageutlLK03ZKeLeKL82eZE-ksSO-PS4pp
 //var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
 var _ = require('underscore');
 
-
-
 var Spreadsheets = {
 
   getAuth: function() {
     return new Promise(function(fulfill, reject) {
+      console.log("getAuth");
       spreadsheet.useServiceAccountAuth(google_creds, function(err) {
         if (err) {
           reject(err);
@@ -29,6 +28,7 @@ var Spreadsheets = {
   },
 
   getSpreadSheet: function(spreadsheetName) {
+    console.log("getSpreadSheet" + spreadsheetName);
     return new Promise(function(fulfill, reject) {
       spreadsheet.getInfo(function(err, sheet_info) {
         if (err) {
@@ -53,6 +53,7 @@ var Spreadsheets = {
   // which includes current term and dates for current term
   // wraps it in a promise
   getHRConfigs: function() {
+    console.log("getHRConfigs");
     var self = this;
     return this.getAuth()
       .then(function() {
@@ -83,6 +84,7 @@ var Spreadsheets = {
   },
 
   addRowToSheet: function(data, sheet) {
+    console.log("addRowToSheet");
     return new Promise(function(fulfill, reject) {
       console.log('adding row');
       sheet.addRow(data, function(err, result) {
@@ -97,6 +99,7 @@ var Spreadsheets = {
   },
 
   getRowByUsername: function(sheet, username) {
+    console.log("getRowByUsername");
     return new Promise(function(fulfill, reject) {
       sheet.getRows(function(err, rows) {
         if (err) {
