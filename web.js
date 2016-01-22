@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 var spreadsheets = require('./spreadsheets');
 var moment = require('moment');
 
+console.log("dali hr-bot starting up");
 
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
