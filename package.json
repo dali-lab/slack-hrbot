@@ -5,7 +5,8 @@
   "main": "web.js",
   "scripts": {
     "start": "./node_modules/.bin/supervisor web.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "refresh": "curl https://dali-hrbot.herokuapp.com/refresh-and-ask-hours"
   },
   "repository": {
     "type": "git",
