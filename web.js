@@ -186,6 +186,8 @@ slack.on('message', function(message) {
       channel.send("I only understand english, files are for computers.");
     } else if ( text.search('fuck') >=0 ) {
       channel.send("RUDE.");
+    } else if ( text.search('who') >=0 ) {
+      channel.send("Hi! I am HRBOT! A helpful slackbot who's sole purpose is to serve DALI and help collect data like weekly hours worked on a project");
     } else if ( (words.length < 2 || text.search( /:clock/ ) >=0 ) && text.search( /:.*:/ ) >= 0) {
       // clock emoji are allowed
       channel.send(":bomb:");
@@ -246,6 +248,8 @@ app.get('/', function(req, res) {
   res.send('Hello World!');
 });
 
+//wakes up to ask on a timer
+// make sure to set up a heroku scheduler or soemthing to hit this at least once a day
 app.get('/refresh-and-ask-hours', function(req, res) {
   res.send('will do!');
   console.log('refresh-and-ask-hours');
@@ -255,24 +259,9 @@ app.get('/refresh-and-ask-hours', function(req, res) {
   //}
 });
 
-app.get('/test', function(req, res) {
-  //var ret = spreadsheets.test();
-  currentMembers.forEach(function(member) {
-    console.log(member);
-    var s = slack.getDMByName(member);
-    if (s) {
-      s.send('how many hours did you work this past week?');
-    } else {
-      console.log("couldn't dm: ", member);
-    }
-  });
 
 
-  res.send('testing complete');
-});
-
-
-
+//sets up app
 var port = Number(process.env.PORT || 5000);
 app.listen(port, function() {
   console.log("Listening on " + port);

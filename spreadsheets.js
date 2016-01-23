@@ -8,7 +8,7 @@ var google_creds = {
    "private_key_id": process.env.PRIVATE_KEY_ID,
    "type": process.env.TYPE
  }
-var spreadsheet = new GoogleSpreadsheet('1nrVscWdIA7kRA-H9DQmbo308NY_3imda-ZfCJ_Vn39c');
+var spreadsheet = new GoogleSpreadsheet(process.env.SPREADSHEET);
 //var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
 var _ = require('underscore');
 
