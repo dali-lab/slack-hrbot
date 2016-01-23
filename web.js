@@ -246,13 +246,13 @@ app.get('/', function(req, res) {
   res.send('Hello World!');
 });
 
-app.get('refresh-and-ask-hours', function(req, res) {
+app.get('/refresh-and-ask-hours', function(req, res) {
+  res.send('will do!');
   console.log('refresh-and-ask-hours');
   // only asks once a week on saturday
   //if (moment().day() == 6) {
     refreshAndAskHours();
   //}
-  res.send('will do!');
 });
 
 app.get('/test', function(req, res) {
