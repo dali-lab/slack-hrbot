@@ -60,7 +60,6 @@ var Spreadsheets = {
   // wraps it in a promise
   getHRConfigs: function() {
     console.log("getHRConfigs");
-    console.log(google_creds);
     var self = this;
     return this.getAuth()
       .then(function() {
