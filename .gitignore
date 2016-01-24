@@ -2,3 +2,4 @@
 .DS_Store
 node_modules
 dalilab-hrbot-8d7a1f0c4199.json
+.env
