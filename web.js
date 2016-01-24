@@ -132,8 +132,7 @@ var refreshAndAskHours = function() {
       console.log(allusers);
       currentMembers.forEach(function(member) {
         console.log('about to ask: ' + member);
-        //var timeouttime = moment().subtract(2, 'days');
-        var timeouttime = moment().subtract(2, 'minutes');
+        var timeouttime = moment().subtract(2, 'days');
         if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
           //if (currentState[member] && currentState[member].lastcontact.isAfter(timeouttime)) {
           console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
