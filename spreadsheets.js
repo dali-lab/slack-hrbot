@@ -1,4 +1,8 @@
-// promisifyed spreadsheets
+// promisifyed spreadsheets js for use with hr slackbot
+// @author tim tregubov, 2016
+// note:  there are newer spreadsheet access api's that might be better than this
+//        this one needed work to wrap up in promises,  could also maybe do this with bluebird
+
 var GoogleSpreadsheet = require("google-spreadsheet");
 var moment = require('moment');
 var google_creds = {
@@ -14,6 +18,7 @@ var _ = require('underscore');
 
 var Spreadsheets = {
 
+  // authorizes and signs in google account app credentials
   getAuth: function() {
     return new Promise(function(fulfill, reject) {
       console.log("getAuth");
@@ -27,6 +32,7 @@ var Spreadsheets = {
     });
   },
 
+  //gets specific sheet from spreadsheet
   getSpreadSheet: function(spreadsheetName) {
     console.log("getSpreadSheet" + spreadsheetName);
     return new Promise(function(fulfill, reject) {
@@ -71,10 +77,13 @@ var Spreadsheets = {
                 var now = moment();
                 var s = moment(rows[i].start, "MM/DD/YYYY");
                 var e = moment(rows[i].end, "MM/DD/YYYY");
+                console.log('start of '+ rows[i].term +' term: '+s.format());
+                console.log('end of '+ rows[i].term +' term: '+e.format());
                 if (now.isBetween(s, e)) {
                   config.currentTerm = rows[i].term;
-                  config.currentWeek = now.diff(s, 'weeks');
-                  console.log("currentWeek: " + config.currentWeek + ", currentTerm: " + config.currentTerm);
+                  config.currentWeek = Math.ceil(now.diff(s, 'weeks', true));
+                  console.log("currentTerm is " + config.currentTerm + "!, and currentWeek: " + config.currentWeek);
+                  break;
                 }
               }
               fulfill(config);
@@ -84,6 +93,7 @@ var Spreadsheets = {
       });
   },
 
+  // adds a row to sheet specified,  fields must exist
   addRowToSheet: function(data, sheet) {
     console.log("addRowToSheet");
     return new Promise(function(fulfill, reject) {
@@ -99,6 +109,7 @@ var Spreadsheets = {
     });
   },
 
+  // returns a row by the username from the sheet by the username field
   getRowByUsername: function(sheet, username) {
     console.log("getRowByUsername");
     return new Promise(function(fulfill, reject) {
@@ -119,6 +130,7 @@ var Spreadsheets = {
     });
   },
 
+  //special to log any messages into an uncaught sheet for record keeping
   logUncaught: function(username, msg) {
     var self = this;
     this.getSpreadSheet('uncaught').then(function(sheet) {
@@ -132,6 +144,7 @@ var Spreadsheets = {
     });
   },
 
+  // update the week hours for a user or inserts new
   updateWeekHours: function(username, hours, week, term) {
     var self = this;
     var spreadsheet;
@@ -157,6 +170,7 @@ var Spreadsheets = {
 
   },
 
+  // gets the last week that a user had input hours for
   lastWeekWorked: function(username, term) {
     var self = this;
     this.getSpreadSheet(term).then(function(sheet) {
@@ -169,11 +183,12 @@ var Spreadsheets = {
       }
       console.log('last week filed: %s, for hrs: %s', weeks[i], row[weeks[i]]);
     });
+    return i;
   },
+
 
   test: function() {
     this.updateWeekHours('tim', 12, 4, '15x');
-
   },
 
 

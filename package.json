@@ -20,6 +20,8 @@
     "google-spreadsheet": "^1.0.1",
     "logfmt": "^1.2.0",
     "moment": "^2.10.3",
+    "mongoose": "^4.3.6",
+    "mongoose-moment": "^0.1.0",
     "request": "^2.59.0",
     "schedulejs": "^0.6.3",
     "slack-client": "^1.4.1",
