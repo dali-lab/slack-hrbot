@@ -197,6 +197,9 @@ slack.on('message', function(message) {
         var anum = text.match(/\d+/g);
         var timeouttime = moment().subtract(5, 'days');
 
+        var contactIsStale = false; //defaults for the case of new users
+        var contactIsConfirmed = false;
+
         if (!allusers[user.name]) {
           console.log("hello new person / memory loss");
           //currentState[user.name] = { lastcontact: moment(), confirmed: false, amount: 0};
@@ -205,10 +208,11 @@ slack.on('message', function(message) {
             confirmed: false,
             amount: 0
           });
+        } else {
+          contactIsStale = allusers[user.name].lastcontact.isBefore(timeouttime);
+          contactIsConfirmed = allusers[user.name].confirmed;
         }
 
-        var contactIsStale = allusers[user.name].lastcontact.isBefore(timeouttime);
-        var contactIsConfirmed = allusers[user.name].confirmed;
         var words = text.trim().split(/\s+/).map(function(x) {
           return x.toLowerCase();
         })
