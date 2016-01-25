@@ -239,6 +239,14 @@ slack.on('message', function(message) {
         } else if ((text.search(':clock') < 0) && words.length < 2 && text.search(/:.*:/) >= 0) {
           // clock emoji are allowed
           channel.send(":bomb:");
+        } else if (text.search(/show hours/i) >=0 ) {
+            spreadsheet.getRowByUsername(currentTerm, user.name)
+            .then(function(result){
+              channel.send('Your hours for ' + currentTerm + ' are ' + result);
+            })
+            .catch(function(err) {
+              channel.send('Error encountered: ' + err);
+            });
         } else if (anum && anum.length > 0) {
           if (amount > 60) {
             channel.send("umm..." + amount + "? I doubt it!");
