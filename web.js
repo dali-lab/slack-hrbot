@@ -228,9 +228,13 @@ slack.on('message', function(message) {
           // for the special casae of do not disturb mode just reset anum to nothing
           channel.send('Sleep Tight!');
           anum = "";
-        } else if (text.search('fuck') >= 0) {
+        } else if (text.search(/fuck/i) >= 0) {
           channel.send("RUDE.");
-        } else if (text.search('who') >= 0) {
+        } else if (text.search(/kronos/i) >= 0) {
+          channel.send("I don't integrate with Kronos unfortunately, so you'll still need to fill those out separately.");
+        } else if (text.search(/neukom/i) >= 0) {
+          channel.send("If you are a Neukom Scholar, yes, please still tell me about your hours.");
+        } else if (text.search(/who/i) >= 0) {
           channel.send("Hi! I am HRBOT! A helpful slackbot who's sole purpose is to serve DALI and help collect data like weekly hours worked on a project");
         } else if ((words.length < 2 || text.search(/:clock/) >= 0) && text.search(/:.*:/) >= 0) {
           // clock emoji are allowed
@@ -255,7 +259,7 @@ slack.on('message', function(message) {
               amount: amount
             });
           }
-        } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0) {
+        } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
           if (contactIsStale || allusers[user.name].amount === undefined) {
             channel.send("I've forgotten that we were talking, how much should I put down for hours worked?");
           } else {
