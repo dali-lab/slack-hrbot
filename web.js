@@ -242,9 +242,11 @@ slack.on('message', function(message) {
         } else if (text.search(/show hours/i) >=0 ) {
             spreadsheet.getRowByUsername(currentTerm, user.name)
             .then(function(result){
+              console.log("hours" + result);
               channel.send('Your hours for ' + currentTerm + ' are ' + result);
             })
             .catch(function(err) {
+              console.log("ERROR" + err);
               channel.send('Error encountered: ' + err);
             });
         } else if (anum && anum.length > 0) {
@@ -324,16 +326,26 @@ app.get('/', function(req, res) {
   res.send('Hello World!');
 });
 
-//wakes up to ask on a timer
+// wakes up to ask on a timer
 // make sure to set up a heroku scheduler or soemthing to hit this at least once a day
 app.get('/refresh-and-ask-hours', function(req, res) {
   res.send('will do!');
   console.log('refresh-and-ask-hours');
   // only asks once a week on saturday
-  //if (moment().day() == 6) {
-  refreshAndAskHours();
-  //}
+  if (moment().day() == 6) {
+    console.log('refresh-and-ask-hours and ITS SATURDAY');
+    refreshAndAskHours();
+  }
 });
+
+//wakes up to ask on a timer
+// make sure to set up a heroku scheduler or soemthing to hit this at least once a day
+app.get('/force-and-ask-hours', function(req, res) {
+  res.send('will do!');
+  console.log('force-and-ask-hours');
+  refreshAndAskHours();
+});
+
 
 
 
