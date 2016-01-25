@@ -13,6 +13,8 @@ var https = require('https');
 var bodyParser = require('body-parser');
 var spreadsheets = require('./spreadsheets');
 var moment = require('moment');
+var moment = require('moment-timezone');
+moment().tz("America/New_York").format();
 var userDB = require('./user');
 
 console.log("dali hr-bot starting up");

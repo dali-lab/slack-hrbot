@@ -20,6 +20,7 @@
     "google-spreadsheet": "^1.0.1",
     "logfmt": "^1.2.0",
     "moment": "^2.10.3",
+    "moment-timezone": "^0.5.0",
     "mongoose": "^4.3.6",
     "mongoose-moment": "^0.1.0",
     "request": "^2.59.0",
