@@ -6,7 +6,7 @@
 var GoogleSpreadsheet = require("google-spreadsheet");
 var moment = require('moment');
 var moment = require('moment-timezone');
-moment().tz("America/New_York").format();
+moment.tz.setDefault("America/New_York");
 
 var google_creds = {
    "client_email": process.env.CLIENT_EMAIL,
