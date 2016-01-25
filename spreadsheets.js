@@ -111,6 +111,27 @@ var Spreadsheets = {
     });
   },
 
+  // get all weeks for a user
+  getAllForUser: function(term, username) {
+    var self = this;
+    var spreadsheet;
+    var allweeks="";
+    return this.getSpreadSheet(term).then(function(sheet) {
+      spreadsheet = sheet;
+      return self.getRowByUsername(sheet, username);
+    }).then(function(row) {
+      var weeks = weekKeys();
+
+      for (var i =0; i < weeks.length; i++) {
+        if (row[weeks[i]]) {
+          allweeks += "week " + i + ": " + row[weeks[i]] + ", ";
+        }
+      }
+
+      return allweeks.slice(0, -2);
+    });
+  },
+
   // returns a row by the username from the sheet by the username field
   getRowByUsername: function(sheet, username) {
     console.log("getRowByUsername" + username);
@@ -161,6 +182,7 @@ var Spreadsheets = {
           return self.getRowByUsername(spreadsheet, username);
         });
     }).then(function(row) {
+      console.log('updateWeekHours username: %s, hours: %d, week: %d, term: %s', username, hours, week, term);
       // now we have row set the weeks
       row[weekFormat(week)] = hours;
       return saveRow(row);

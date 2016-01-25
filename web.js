@@ -130,13 +130,11 @@ var refreshAndAskHours = function() {
       return userDB.getAll()
     })
     .then(function(allusers) {
-      console.log('allusers: ');
-      console.log(allusers);
       currentMembers.forEach(function(member) {
         console.log('about to ask: ' + member);
         var timeouttime = moment().subtract(2, 'days');
         if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
-          //if (currentState[member] && currentState[member].lastcontact.isAfter(timeouttime)) {
+          // do nothing if we've already asked this person recently
           console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
         } else {
           var msg = "Hi " + member + "!  I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
@@ -171,135 +169,153 @@ slack.on('message', function(message) {
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
 
-      var type = message.type,
-        channel = slack.getChannelGroupOrDMByID(message.channel),
-        user = slack.getUserByID(message.user),
-        time = message.ts,
-        text = (message.text) ? message.text : "",
-        response = '';
+    var type = message.type,
+      channel = slack.getChannelGroupOrDMByID(message.channel),
+      user = slack.getUserByID(message.user),
+      time = message.ts,
+      text = (message.text) ? message.text : "",
+      response = '';
 
-      // in some cases may not be able to get user?
-      if (!user) {
-        user = channel
-      };
+    // in some cases may not be able to get user?
+    if (!user) {
+      user = channel
+    };
 
-      console.log('Received: %s %s %s %s %s', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
+    console.log('Received: %s %s %s %s %s', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
-      var atme = isAtMention(slack.self.id, text);
+    var atme = isAtMention(slack.self.id, text);
 
-      if (user.name == 'remindatron') {
-        channel.send("thanks @remindatron!");
+    if (user.name == 'remindatron') {
+      channel.send("thanks @remindatron!");
 
-        if (moment().day() == 6) {
-          refreshAndAskHours();
-        }
-      } else if (type == 'message' && user.name == channel.name) {
-        // direct message if channel and user are the same
-        console.log('contacted by: ' + channel.name + ', ' + user.name + ', ' + text);
-        var anum = text.match(/\d+/g);
-        var timeouttime = moment().subtract(5, 'days');
+      if (moment().day() == 6) {
+        refreshAndAskHours();
+      }
+    } else if (type == 'message' && user.name == channel.name) {
 
-        var contactIsStale = false; //defaults for the case of new users
-        var contactIsConfirmed = false;
+      // direct message if channel and user are the same
+      console.log('contacted by: ' + channel.name + ', ' + user.name + ', ' + text);
+      var anum = text.match(/\d+/g);
+      var timeouttime = moment().subtract(2, 'days');
 
-        if (!allusers[user.name]) {
-          console.log("hello new person / memory loss");
-          //currentState[user.name] = { lastcontact: moment(), confirmed: false, amount: 0};
+      var contactIsStale = false; //defaults for the case of new users
+      var contactIsConfirmed = false;
+
+      if (!allusers[user.name]) {
+        console.log("hello new person / memory loss");
+        //currentState[user.name] = { lastcontact: moment(), confirmed: false, amount: 0};
+        userDB.updateAddUser(user.name, {
+          lastcontact: moment(),
+          confirmed: false,
+          amount: 0
+        });
+      } else {
+        contactIsStale = allusers[user.name].lastcontact.isBefore(timeouttime);
+        contactIsConfirmed = allusers[user.name].confirmed;
+      }
+
+      var words = text.trim().split(/\s+/).map(function(x) {
+        return x.toLowerCase();
+      })
+      var amount = (anum && anum.length > 0) ? anum.reduce(function(a, b) {
+        return parseFloat(a) + parseFloat(b)
+      }, 0) : null;
+
+      if (words.indexOf('uploaded') >= 0 || words.indexOf('shared') >= 0) {
+        channel.send("I only understand english, files are for computers.");
+      } else if (text.search('Do Not Disturb mode') >= 0) {
+        // for the special casae of do not disturb mode just reset anum to nothing
+        channel.send('Sleep Tight!');
+        anum = "";
+      } else if (text.search(/fuck/i) >= 0) {
+        channel.send("RUDE.");
+      } else if (text.search(/kronos/i) >= 0) {
+        channel.send("I don't integrate with Kronos unfortunately, so you'll still need to fill those out separately.");
+      } else if (text.search(/neukom/i) >= 0) {
+        channel.send("If you are a Neukom Scholar, yes, please still tell me about your hours.");
+      } else if (text.search(/who/i) >= 0) {
+        channel.send("Hi! I am HRBOT! A helpful slackbot who's sole purpose is to serve DALI and help collect data like weekly hours worked on a project");
+      } else if ((text.search(':clock') < 0) && words.length < 2 && text.search(/:.*:/) >= 0) {
+        // clock emoji are allowed
+        channel.send(":bomb:");
+      } else if (text.search(/show hours/i) >= 0) {
+        // show all hours for the term
+        spreadsheets.getAllForUser(currentTerm, user.name)
+          .then(function(result) {
+            console.log("hours" + result);
+            channel.send('Your hours for ' + currentTerm + ' are: \n' + result + "\n to edit say:  change week 1 to 12 hours");
+          })
+          .catch(function(err) {
+            console.log("ERROR: " + JSON.stringify(err));
+            channel.send('Error encountered: ' + err);
+          });
+      } else if (anum && anum.length > 0) {
+        // if there are numbers in the string at all
+        var regexp = new RegExp(/change week (\d*) to (\d*)/i);
+        var matches = regexp.exec(text);
+        //check if they are trying to change and just do it, no confirmation necessary here for simplicity
+        if (matches.length >= 3) {
+          var altamount = parseFloat(matches[2]);
+          var altweek = parseInt(matches[1]);
+          userDB.updateAddUser(user.name, {
+            lastcontact: moment(),
+            confirmed: true,
+            amount: altamount
+          });
+          spreadsheets.updateWeekHours(user.name, altamount, altweek, currentTerm);
+          channel.send("Ok! Done! You changed week " + altweek + " to " + altamount + " hours.");
+        } else if (amount > 60 || amount < 0) {
+          // don't allow greater than 60 hours or negative numbers at all ever
+          channel.send("umm..." + amount + "? I doubt it!");
+        } else if (amount > 20) {
+          // warn users about being over 20 but record in case
+          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week " + currentWeek + ", yes/no?");
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
             confirmed: false,
-            amount: 0
+            amount: amount
           });
         } else {
-          contactIsStale = allusers[user.name].lastcontact.isBefore(timeouttime);
-          contactIsConfirmed = allusers[user.name].confirmed;
-        }
-
-        var words = text.trim().split(/\s+/).map(function(x) {
-          return x.toLowerCase();
-        })
-        var amount = (anum && anum.length > 0) ? anum.reduce(function(a, b) {
-          return parseFloat(a) + parseFloat(b)
-        }, 0) : null;
-
-        if (words.indexOf('uploaded') >= 0 || words.indexOf('shared') >= 0) {
-          channel.send("I only understand english, files are for computers.");
-        } else if (text.search('Do Not Disturb mode') >= 0) {
-          // for the special casae of do not disturb mode just reset anum to nothing
-          channel.send('Sleep Tight!');
-          anum = "";
-        } else if (text.search(/fuck/i) >= 0) {
-          channel.send("RUDE.");
-        } else if (text.search(/kronos/i) >= 0) {
-          channel.send("I don't integrate with Kronos unfortunately, so you'll still need to fill those out separately.");
-        } else if (text.search(/neukom/i) >= 0) {
-          channel.send("If you are a Neukom Scholar, yes, please still tell me about your hours.");
-        } else if (text.search(/who/i) >= 0) {
-          channel.send("Hi! I am HRBOT! A helpful slackbot who's sole purpose is to serve DALI and help collect data like weekly hours worked on a project");
-        } else if ((text.search(':clock') < 0) && words.length < 2 && text.search(/:.*:/) >= 0) {
-          // clock emoji are allowed
-          channel.send(":bomb:");
-        } else if (text.search(/show hours/i) >=0 ) {
-            spreadsheet.getRowByUsername(currentTerm, user.name)
-            .then(function(result){
-              console.log("hours" + result);
-              channel.send('Your hours for ' + currentTerm + ' are ' + result);
-            })
-            .catch(function(err) {
-              console.log("ERROR" + err);
-              channel.send('Error encountered: ' + err);
-            });
-        } else if (anum && anum.length > 0) {
-          if (amount > 60) {
-            channel.send("umm..." + amount + "? I doubt it!");
-          } else if (amount > 20) {
-            channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours last week, yes/no?");
-            //currentState[user.name] = { lastcontact: moment(), confirmed: false, amount: amount};
-            userDB.updateAddUser(user.name, {
-              lastcontact: moment(),
-              confirmed: false,
-              amount: amount
-            });
-          } else {
-            channel.send("Ok! I'm putting down that you worked *" + amount + "* hours last week, yes/no?");
-            //currentState[user.name] = { lastcontact: moment(), confirmed: false, amount: amount};
-            userDB.updateAddUser(user.name, {
-              lastcontact: moment(),
-              confirmed: false,
-              amount: amount
-            });
-          }
-        } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
-          if (contactIsStale || allusers[user.name].amount === undefined) {
-            channel.send("I've forgotten that we were talking, how much should I put down for hours worked?");
-          } else {
-            spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
-            //currentState[user.name].confirmed = true;
-            userDB.updateAddUser(user.name, {
-              confirmed: true
-            });
-            channel.send("Okeedokee, thanks!");
-          }
-        } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0) {
-          //currentState[user.name].confirmed = false;
+          // otherwise confirm that this is all correct
           userDB.updateAddUser(user.name, {
-            confirmed: false
+            lastcontact: moment(),
+            confirmed: false,
+            amount: amount
           });
-          channel.send("Ok, so just send me the number please.");
-        } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
-          channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week.");
-        } else if (words.indexOf('testit') >= 0) {
-          channel.send("testing");
-          refreshAndAskHours();
-        } else {
-          channel.send("What? I only understand numbers or pleas for help.");
-          spreadsheets.logUncaught(user.name, text);
+          channel.send("Ok! I'm putting down that you worked *" + amount + "* hours during week " + currentWeek + ", yes/no?");
         }
-      } else if (atme) {
-        channel.send("Please direct message me about this matter.");
+      } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
+        // if they agree and the user has an unconfirmed amount
+        if (contactIsStale || allusers[user.name].amount === undefined) {
+        // if the messages are too old lets just reset
+          channel.send("I've forgotten that we were talking, how much should I put down for hours worked?");
+        } else {
+          // if they confirm and not stale etc then lets record!
+          spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
+          userDB.updateAddUser(user.name, {
+            confirmed: true
+          });
+          channel.send("Okeedokee, thanks!");
+        }
+      } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0) {
+        // if they say no lets unset confirmation in case
+        userDB.updateAddUser(user.name, {
+          confirmed: false
+        });
+        channel.send("Ok, so just send me the number please.");
+      } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
+        // give them some help!
+        channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
       } else {
-        console.log('ignoring from ' + user.name + ': ' + text);
+        // general confusions ensues
+        channel.send("What? I only understand numbers or pleas for help.");
+        spreadsheets.logUncaught(user.name, text);
       }
+    } else if (atme) {
+      channel.send("Please direct message me about this matter.");
+    } else {
+      console.log('ignoring from ' + user.name + ': ' + text);
+    }
   });
 
 });
@@ -307,7 +323,7 @@ slack.on('message', function(message) {
 
 //
 slack.on('error', function(error) {
-  console.error('Error: %s', error);
+  console.error('Error: %s', JSON.stringify(error));
 });
 
 

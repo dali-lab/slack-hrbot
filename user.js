@@ -40,6 +40,7 @@ var User = {
         {upsert: true, setDefaultsOnInsert: true},
         function (err, numAffected) {
           if (err) {
+            console.log("Error during updateAddUser: " + err)
             reject(err);
           } else {
             fulfill();
