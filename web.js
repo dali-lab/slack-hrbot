@@ -250,13 +250,15 @@ slack.on('message', function(message) {
             channel.send('Error encountered: ' + err);
           });
       } else if (anum && anum.length > 0) {
+        console.log('processing number: ' + anum);
         // if there are numbers in the string at all
         var regexp = new RegExp(/change week (\d*) to (\d*)/i);
         var matches = regexp.exec(text);
         //check if they are trying to change and just do it, no confirmation necessary here for simplicity
-        if (matches.length >= 3) {
+        if (matches && matches.length >= 3) {
           var altamount = parseFloat(matches[2]);
           var altweek = parseInt(matches[1]);
+          console.log('got changes for week: %d with hours %d for user %s', altweek, altamount, user.name);
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
             confirmed: true,
@@ -265,17 +267,20 @@ slack.on('message', function(message) {
           spreadsheets.updateWeekHours(user.name, altamount, altweek, currentTerm);
           channel.send("Ok! Done! You changed week " + altweek + " to " + altamount + " hours.");
         } else if (amount > 60 || amount < 0) {
+          console.log('invalid amount: ' + amount);
           // don't allow greater than 60 hours or negative numbers at all ever
           channel.send("umm..." + amount + "? I doubt it!");
         } else if (amount > 20) {
+          console.log("high amount warning: " + amount);
           // warn users about being over 20 but record in case
-          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week " + currentWeek + ", yes/no?");
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
             confirmed: false,
             amount: amount
           });
+          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week " + currentWeek + ", yes/no?");
         } else {
+          console.log("confirm %s, %d, %d", user.name, currentWeek, amount);
           // otherwise confirm that this is all correct
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
@@ -284,6 +289,7 @@ slack.on('message', function(message) {
           });
           channel.send("Ok! I'm putting down that you worked *" + amount + "* hours during week " + currentWeek + ", yes/no?");
         }
+        console.log('end processing');
       } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
         // if they agree and the user has an unconfirmed amount
         if (contactIsStale || allusers[user.name].amount === undefined) {
