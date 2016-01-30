@@ -121,6 +121,31 @@ var refreshSlack = function() {
 
 };
 
+// asks user for time 
+var pokeMember = function(allusers, member) {
+  console.log('about to ask: ' + member);
+  var timeouttime = moment().subtract(2, 'days');
+  if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
+    // do nothing if we've already asked this person recently
+    console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
+  } else {
+    var msg = "Hi " + member + "!  I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
+    var channel = slack.getDMByName(member);
+    // if no existing dm then open one
+    if (!channel) {
+      var memberid = slack.getUserByName(member).id;
+      console.log('getting id for %: %s', member, memberid);
+      slack.openDM(slack.getUserByName(member).id, function(dm) {
+        channel = slack.getDMByName(member);
+        channel.send(msg);
+      });
+    } else {
+      channel.send(msg);
+    }
+  }
+
+};
+
 // run this to prompt members to submit their hours
 var refreshAndAskHours = function() {
   return refreshConfigs()
@@ -131,28 +156,11 @@ var refreshAndAskHours = function() {
       return userDB.getAll()
     })
     .then(function(allusers) {
+      // loop through users and contact WITH DELAY to prevent slack blocking
+      var i = 1;
       currentMembers.forEach(function(member) {
-        console.log('about to ask: ' + member);
-        var timeouttime = moment().subtract(2, 'days');
-        if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
-          // do nothing if we've already asked this person recently
-          console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
-        } else {
-          var msg = "Hi " + member + "!  I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
-          var channel = slack.getDMByName(member);
-          // if no existing dm then open one
-          if (!channel) {
-            var memberid = slack.getUserByName(member).id;
-            console.log('getting id for %: %s', member, memberid);
-            slack.openDM(slack.getUserByName(member).id, function(dm) {
-              channel = slack.getDMByName(member);
-              channel.send(msg);
-            });
-          } else {
-            channel.send(msg);
-          }
-          sleep.sleep(2); //TODO: rip this out into separate function with increasing settimeout;
-        }
+        setTimeout(function() {pokeMember(allusers, member);}, i * 2000);
+        i++;
       });
     })
     .catch(function(err) {
