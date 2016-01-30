@@ -151,7 +151,7 @@ var refreshAndAskHours = function() {
           } else {
             channel.send(msg);
           }
-          sleep.sleep(1); //TODO: rip this out into separate function with increasing settimeout;
+          sleep.sleep(2); //TODO: rip this out into separate function with increasing settimeout;
         }
       });
     })
