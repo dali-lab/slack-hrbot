@@ -6,7 +6,6 @@ var express = require("express");
 var logfmt = require("logfmt");
 var Slack = require("slack-client");
 var request = require('request');
-var sleep = require('sleep');
 var app = express();
 var port = process.env.PORT || 5000;
 var http = require('http');
@@ -121,7 +120,7 @@ var refreshSlack = function() {
 
 };
 
-// asks user for time 
+// asks user for time
 var pokeMember = function(allusers, member) {
   console.log('about to ask: ' + member);
   var timeouttime = moment().subtract(2, 'days');

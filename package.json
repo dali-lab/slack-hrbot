@@ -26,7 +26,6 @@
     "mongoose-moment": "^0.1.0",
     "request": "^2.67.0",
     "slack-client": "^1.5.1",
-    "sleep": "^3.0.0",
     "supervisor": "^0.7.1",
     "underscore": "^1.8.3"
   }
