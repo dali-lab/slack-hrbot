@@ -6,6 +6,7 @@ var express = require("express");
 var logfmt = require("logfmt");
 var Slack = require("slack-client");
 var request = require('request');
+var sleep = require('sleep');
 var app = express();
 var port = process.env.PORT || 5000;
 var http = require('http');
@@ -150,6 +151,7 @@ var refreshAndAskHours = function() {
           } else {
             channel.send(msg);
           }
+          sleep.sleep(1); //TODO: rip this out into separate function with increasing settimeout;
         }
       });
     })
