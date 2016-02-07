@@ -200,6 +200,8 @@ slack.on('message', function(message) {
       if (moment().day() == 6) {
         refreshAndAskHours();
       }
+    } else if (channel.name == '16w' || channel.name == '16s' || channel.name == '16x' || channel.name == '16f') {
+      // do nothing if contacted on termly channel
     } else if (type == 'message' && user.name == channel.name) {
 
       // direct message if channel and user are the same
