@@ -177,10 +177,10 @@ var sendQRCodes = function(res) {
   // console.log(res);
 
   console.log('generating qr code2');
-  QRCode.toDataURL('i am a pony!',function(err,url){
-    console.log('printing qr code 2');
-    console.log(url);
-  });
+  // QRCode.toDataURL('i am a pony!',function(err,url){
+  //   console.log('printing qr code 2');
+  //   console.log(url);
+  // });
 }
 
 //  when we first start refresh all slack stuff
@@ -395,7 +395,7 @@ app.get('/force-and-ask-hours', function(req, res) {
 
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  console.log('send-qr-codes');
+  console.log('sending qr codes');
   sendQRCodes(res);
 });
 
