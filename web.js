@@ -387,14 +387,9 @@ app.get('/force-and-ask-hours', function(req, res) {
 });
 
 app.get('/send-qr-codes', function(req, res) {
-  res.send('will do!');
+  // res.send('will do!');
   console.log('sending qr codes');
-  // sendQRCodes(res);
-  console.log('generating qr code1');
-  var code = qr.image(new Date().toString(), { type: 'svg' });
-  res.type('svg');
-  code.pipe(res);
-  console.log(res);
+  sendQRCodes(res);
 });
 
 
