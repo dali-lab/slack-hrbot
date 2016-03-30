@@ -16,6 +16,7 @@ var moment = require('moment');
 var moment = require('moment-timezone');
 moment.tz.setDefault("America/New_York");
 var userDB = require('./user');
+var qr = require('qr-image');
 
 console.log("dali hr-bot starting up");
 
@@ -166,6 +167,14 @@ var refreshAndAskHours = function() {
       console.log(err);
     });
 };
+
+var sendQRCodes = function() {
+  console.log('generating qr code')
+  var code = qr.image(new Date().toString(), { type: 'svg' });
+  res.type('svg');
+  code.pipe(res);
+  console.log(res);
+}
 
 //  when we first start refresh all slack stuff
 slack.on('open', function() {
@@ -377,6 +386,11 @@ app.get('/force-and-ask-hours', function(req, res) {
   refreshAndAskHours();
 });
 
+app.get('/send-qr-codes', function(req, res) {
+  res.send('will do!');
+  console.log('send-qr-codes');
+  sendQRCodes();
+});
 
 
 
