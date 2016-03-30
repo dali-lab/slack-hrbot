@@ -37,7 +37,7 @@ var Spreadsheets = {
 
   //gets specific sheet from spreadsheet
   getSpreadSheet: function(spreadsheetName) {
-    console.log("getSpreadSheet" + spreadsheetName);
+    console.log("getSpreadSheet: " + spreadsheetName);
     return new Promise(function(fulfill, reject) {
       spreadsheet.getInfo(function(err, sheet_info) {
         if (err) {
@@ -99,7 +99,6 @@ var Spreadsheets = {
   addRowToSheet: function(data, sheet) {
     console.log("addRowToSheet");
     return new Promise(function(fulfill, reject) {
-      console.log('adding row');
       sheet.addRow(data, function(err, result) {
         if (err) {
           console.log('error: ' + err);
@@ -134,7 +133,7 @@ var Spreadsheets = {
 
   // returns a row by the username from the sheet by the username field
   getRowByUsername: function(sheet, username) {
-    console.log("getRowByUsername" + username);
+    console.log("getRowByUsername: " + username);
     return new Promise(function(fulfill, reject) {
       sheet.getRows(function(err, rows) {
         if (err) {
@@ -144,9 +143,10 @@ var Spreadsheets = {
             return r.username == username;
           });
           if (row) {
+            console.log("found " + username + " at row " + row);
             fulfill(row);
           } else {
-            reject(new Error('no row found with username: ' + username));
+            reject(new Error('no row found with username ' + username));
           }
         }
       })
@@ -208,6 +208,33 @@ var Spreadsheets = {
       console.log('last week filed: %s, for hrs: %s', weeks[i], row[weeks[i]]);
     });
     return i;
+  },
+
+
+  checkInUser: function(username, week, term) {
+    var self = this;
+    var spreadsheet;
+    var name = term + "-check-in"
+    this.getSpreadSheet(name).then(function(sheet) {
+      spreadsheet = sheet;
+      return self.getRowByUsername(spreadsheet, username);
+    }).catch(function(err) {
+      // if the user isn't in the spreadsheet yet need to add first
+      return self.addRowToSheet({'username': username},spreadsheet)
+        .then(function(){
+          // retry getting the row by username
+          return self.getRowByUsername(spreadsheet, username);
+        });
+    }).then(function(row) {
+      console.log('updated check in for user: %s, term: %s', username, term);
+      // now we have row set login
+      row[weekFormat(week)] = 1;
+      return saveRow(row);
+    }).catch(function(err) {
+      console.log(err);
+      self.logUncaught(username, msg);
+    });
+
   },
 
 

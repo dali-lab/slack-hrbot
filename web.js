@@ -16,6 +16,9 @@ var moment = require('moment');
 var moment = require('moment-timezone');
 moment.tz.setDefault("America/New_York");
 var userDB = require('./user');
+var qr = require('qr-image');
+var Slack_Upload = require('node-slack-upload');
+var fs = require("fs");
 
 console.log("dali hr-bot starting up");
 
@@ -30,11 +33,13 @@ var token = process.env.SLACK_BOT_TOKEN, // Add a bot at https://my.slack.com/se
   autoMark = true;
 
 var slack = new Slack(token, autoReconnect, autoMark);
+var slack_upload = new Slack_Upload(token);
 var currentTerm = '16w'; // default at start
 var currentWeek = 0; //default
 var currentMembers = [];
 var currentGroups = [];
 var currentChannels = [];
+var checkInChannel;
 
 // get tag format for an @mention
 var makeMention = function(userId) {
@@ -109,6 +114,9 @@ var refreshSlack = function() {
       return human.name;
     });
 
+  // get checkInChannel
+  checkInChannel = slack.getGroupByName('check-in');
+
   var weekday = moment().day();
 
   console.log('Slack! You are @%s (%s) of %s', slack.self.name, slack.self.id, slack.team.name);
@@ -142,7 +150,6 @@ var pokeMember = function(allusers, member) {
       channel.send(msg);
     }
   }
-
 };
 
 // run this to prompt members to submit their hours
@@ -167,6 +174,83 @@ var refreshAndAskHours = function() {
     });
 };
 
+var prepQRCodeMessages = function(username) {
+  console.log('generating and sending qr codes!');
+
+  if (username != null) { // specific user
+    try {
+      var user = slack.getUserByName(username); // exists
+      sendQRCode(username);
+    } catch(err) {
+      console.log('Could not find user ' + username);
+    }
+  } else { // all users
+    var i = 1;
+    currentMembers.forEach(function(member) {
+      setTimeout(function() {sendQRCode(member);}, i * 2000);
+      i++;
+    });
+  }
+}
+
+// send message and upload file to user
+var sendQRCode = function(member) {
+  var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
+
+  // get channel
+  var channel = slack.getDMByName(member);
+  // if no existing dm then open one
+  if (!channel) {
+    var memberid = slack.getUserByName(member).id;
+    console.log('getting id for %: %s', member, memberid);
+    slack.openDM(slack.getUserByName(member).id, function(dm) {
+      channel = slack.getDMByName(member);
+    });
+  }
+
+  var filename = 'qr_code_' + member + '.png';
+
+  channel.send(message);
+
+  // write qr image with member name
+  // the margin prevents the image from getting cut off in the preview
+  fs.writeFileSync(filename, qr.imageSync(member, {margin: 6}));
+
+  // upload
+  slack_upload.uploadFile({
+    file: fs.createReadStream(filename),
+    filetype: 'auto',
+    title: 'Check-in QR Code',
+    initialComment: 'This will come in handy!',
+    channels: channel.id,
+  }, function(err) {
+    if (err) {
+      console.error('Error: ' + err);
+    }
+    else {
+      console.log('sent qr code to %s', member);
+    }
+  });
+
+  fs.unlinkSync(filename);
+}
+
+var qrCheckIn = function(req) {
+  var username = req.body.username;
+  console.log("\nchecking in user: " + username);
+  spreadsheets.checkInUser(username, currentWeek, currentTerm);
+  try {
+    var name = slack.getUserByName(username).real_name;
+    checkInChannel.send(name + ' just checked in!');
+  } catch(err) {
+    slack.openDM(slack.getUserByName('patxu').id, function(dm) {
+      channel = slack.getDMByName('patxu');
+      channel.send('Someone just tried to scan in "' + username + '", but I ' +
+      'can\'t find a member by that username. Help!');
+    });
+  }
+}
+
 //  when we first start refresh all slack stuff
 slack.on('open', function() {
   refreshSlack();
@@ -177,6 +261,10 @@ slack.on('message', function(message) {
 
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
+
+    if (user.name == 'hr-bot') {
+      return; // ignore from self
+    }
 
     var type = message.type,
       channel = slack.getChannelGroupOrDMByID(message.channel),
@@ -321,6 +409,9 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
+      } else if (words.indexOf('lying') >= 0) {
+        // give them some help!
+        channel.send("I'm sorry, I'm trying my best- promise!");
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
@@ -377,7 +468,18 @@ app.get('/force-and-ask-hours', function(req, res) {
   refreshAndAskHours();
 });
 
+app.get('/send-qr-codes', function(req, res) {
+  res.send('will do!');
 
+  var specificUser = req.query.user;
+
+  prepQRCodeMessages(specificUser);
+});
+
+app.post('/qr-check-in', function(req, res) {
+  res.send('will do!');
+  qrCheckIn(req);
+});
 
 
 //sets up app
