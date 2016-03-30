@@ -170,11 +170,11 @@ var refreshAndAskHours = function() {
 };
 
 var sendQRCodes = function(res) {
-  console.log('generating qr code1')
-  var code = qr.image(new Date().toString(), { type: 'svg' });
-  res.type('svg');
-  code.pipe(res);
-  console.log(res);
+  // console.log('generating qr code1')
+  // var code = qr.image(new Date().toString(), { type: 'svg' });
+  // res.type('svg');
+  // code.pipe(res);
+  // console.log(res);
 
   console.log('generating qr code2')
   QRCode.toDataURL('i am a pony!',function(err,url){
