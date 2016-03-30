@@ -395,8 +395,8 @@ app.get('/force-and-ask-hours', function(req, res) {
 
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  console.log('sending qr codes');
-  sendQRCodes(res);
+  // console.log('sending qr codes');
+  // sendQRCodes(res);
 });
 
 
