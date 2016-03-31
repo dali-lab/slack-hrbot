@@ -236,7 +236,7 @@ var Spreadsheets = {
       self.logUncaught(username, msg)
     });
 
-  }
+  },
 
 
   test: function() {
