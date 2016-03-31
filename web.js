@@ -178,6 +178,7 @@ var sendQRCodes = function(res) {
 
 var qrCheckIn = function(res) {
   spreadsheets.checkInUser('test', currentTerm);
+  res.send('will do!');
 }
 
 //  when we first start refresh all slack stuff

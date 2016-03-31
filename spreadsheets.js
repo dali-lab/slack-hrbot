@@ -134,7 +134,7 @@ var Spreadsheets = {
 
   // returns a row by the username from the sheet by the username field
   getRowByUsername: function(sheet, username) {
-    console.log("getRowByUsername" + username);
+    console.log("getRowByUsername: " + username);
     return new Promise(function(fulfill, reject) {
       sheet.getRows(function(err, rows) {
         if (err) {
