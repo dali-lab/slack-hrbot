@@ -176,6 +176,10 @@ var sendQRCodes = function(res) {
   console.log(res);
 }
 
+var qrCheckIn = function(res) {
+  spreadsheets.checkInUser('test', currentTerm);
+}
+
 //  when we first start refresh all slack stuff
 slack.on('open', function() {
   refreshSlack();
@@ -387,11 +391,14 @@ app.get('/force-and-ask-hours', function(req, res) {
 });
 
 app.get('/send-qr-codes', function(req, res) {
-  // res.send('will do!');
   console.log('sending qr codes');
   sendQRCodes(res);
 });
 
+app.get('/qr-check-in', function(req, res) {
+  console.log('getting qr check in');
+  qrCheckIn(res);
+});
 
 
 //sets up app

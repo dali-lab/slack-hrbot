@@ -37,7 +37,7 @@ var Spreadsheets = {
 
   //gets specific sheet from spreadsheet
   getSpreadSheet: function(spreadsheetName) {
-    console.log("getSpreadSheet" + spreadsheetName);
+    console.log("getSpreadSheet " + spreadsheetName);
     return new Promise(function(fulfill, reject) {
       spreadsheet.getInfo(function(err, sheet_info) {
         if (err) {
@@ -209,6 +209,34 @@ var Spreadsheets = {
     });
     return i;
   },
+
+
+  checkInUser: function(username, term) {
+    var self = this;
+    var spreadsheet;
+    var name = term + "-check-in"
+    this.getSpreadSheet(name).then(function(sheet) {
+      spreadsheet = sheet;
+      return self.getRowByUsername(spreadsheet, username);
+    }).catch(function(err) {
+      // if the user isn't in the spreadsheet yet need to add first
+      return self.addRowToSheet({'username': username},spreadsheet)
+        .then(function(){
+          // retry getting the row by username
+          return self.getRowByUsername(spreadsheet, username);
+        });
+    }).then(function(row) {
+      console.log('check in user username: %s, term: %s', username, term);
+      // now we have row set login
+      row[weekFormat(week)] = 1;
+      return saveRow(row);
+    }).catch(function(err) {
+      var msg = 'check in user error: ' + err;
+      console.log(msg);
+      self.logUncaught(username, msg)
+    });
+
+  }
 
 
   test: function() {
