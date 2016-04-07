@@ -169,7 +169,7 @@ var refreshAndAskHours = function() {
 };
 
 var sendQRCodes = function(res) {
-  console.log('generating qr code1');
+  console.log('generating qr code!');
   var code = qr.image(new Date().toString(), { type: 'svg' });
   res.type('svg');
   code.pipe(res);
@@ -177,6 +177,7 @@ var sendQRCodes = function(res) {
 }
 
 var qrCheckIn = function(res) {
+  console.log(res);
   spreadsheets.checkInUser('test', currentTerm);
   res.send('will do!');
 }
