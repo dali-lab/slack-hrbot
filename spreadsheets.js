@@ -97,9 +97,8 @@ var Spreadsheets = {
 
   // adds a row to sheet specified,  fields must exist
   addRowToSheet: function(data, sheet) {
-    console.log("addRowToSheet");
+    console.log("addRowToSheet: " + data);
     return new Promise(function(fulfill, reject) {
-      console.log('adding row');
       sheet.addRow(data, function(err, result) {
         if (err) {
           console.log('error: ' + err);
@@ -147,7 +146,7 @@ var Spreadsheets = {
             console.log("found " + username + " at row " + row);
             fulfill(row);
           } else {
-            reject(new Error('no row found with username: ' + username));
+            reject(new Error('no row found with username ' + username));
           }
         }
       })
@@ -221,9 +220,11 @@ var Spreadsheets = {
       return self.getRowByUsername(spreadsheet, username);
     }).catch(function(err) {
       // if the user isn't in the spreadsheet yet need to add first
+      console.log("user not in sheet- adding row");
       return self.addRowToSheet({'username': username},spreadsheet)
         .then(function(){
           // retry getting the row by username
+          console.log("retrying getRowByUsername");
           return self.getRowByUsername(spreadsheet, username);
         });
     }).then(function(row) {
