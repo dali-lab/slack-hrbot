@@ -179,7 +179,7 @@ var sendQRCodes = function(res) {
 var qrCheckIn = function(req) {
   var username = req.body.username;
   console.log("\nchecking in user: " + username);
-  spreadsheets.checkInUser(username, currentTerm);
+  spreadsheets.checkInUser(username, currentWeek, currentTerm);
 
 }
 

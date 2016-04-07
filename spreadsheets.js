@@ -213,7 +213,7 @@ var Spreadsheets = {
   },
 
 
-  checkInUser: function(username, term) {
+  checkInUser: function(username, week, term) {
     var self = this;
     var spreadsheet;
     var name = term + "-check-in"
