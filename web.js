@@ -143,7 +143,6 @@ var pokeMember = function(allusers, member) {
       channel.send(msg);
     }
   }
-
 };
 
 // run this to prompt members to submit their hours
@@ -170,11 +169,28 @@ var refreshAndAskHours = function() {
 
 var sendQRCodes = function(res) {
   console.log('generating qr code!');
-  console.log('members: ' + currentMembers);
-  var code = qr.image(new Date().toString(), { type: 'svg' });
-  res.type('svg');
-  code.pipe(res);
-  console.log(res);
+  currentMembers.forEach(function(member) {
+    var code = qr.image(member, { type: 'png' });
+    var msg = "Hi " + member + "!  I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!";
+    var channel = slack.getDMByName(member);
+    // if no existing dm then open one
+    if (!channel) {
+      var memberid = slack.getUserByName(member).id;
+      console.log('getting id for %: %s', member, memberid);
+      slack.openDM(slack.getUserByName(member).id, function(dm) {
+        channel = slack.getDMByName(member);
+        channel.send(msg);
+      });
+    } else {
+      channel.send(msg);
+      channel.send(code);
+    }
+  })
+  .catch(function(err) {
+    console.log(err);
+  });
+  // res.type('svg');
+  // code.pipe(res);
 }
 
 var qrCheckIn = function(req) {

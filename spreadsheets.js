@@ -135,12 +135,10 @@ var Spreadsheets = {
   getRowByUsername: function(sheet, username) {
     console.log("getRowByUsername: " + username);
     return new Promise(function(fulfill, reject) {
-      console.log(JSON.stringify(sheet));
       sheet.getRows(function(err, rows) {
         if (err) {
           reject(err);
         } else {
-          console.log("rows: " + rows + ',' + rows.count);
           var row = _.find(rows, function(r) {
             return r.username == username;
           });
@@ -222,11 +220,9 @@ var Spreadsheets = {
       return self.getRowByUsername(spreadsheet, username);
     }).catch(function(err) {
       // if the user isn't in the spreadsheet yet need to add first
-      console.log("user not in sheet- adding row");
       return self.addRowToSheet({'username': username},spreadsheet)
         .then(function(){
           // retry getting the row by username
-          console.log("retrying getRowByUsername");
           return self.getRowByUsername(spreadsheet, username);
         });
     }).then(function(row) {
