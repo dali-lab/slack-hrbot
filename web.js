@@ -177,7 +177,7 @@ var sendQRCodes = function(res) {
 }
 
 var qrCheckIn = function(res) {
-  console.log(res.body);
+  console.log(res.body.username);
   spreadsheets.checkInUser('test', currentTerm);
   res.send('will do!');
 }
