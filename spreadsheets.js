@@ -72,6 +72,7 @@ var Spreadsheets = {
         return new Promise(function(fulfill, reject) {
           config = {}
           sheet.getRows(function(err, rows) {
+            console.log("HR rows: " + rows);
             if (err) {
               reject(err);
             } else {
