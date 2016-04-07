@@ -37,7 +37,7 @@ var Spreadsheets = {
 
   //gets specific sheet from spreadsheet
   getSpreadSheet: function(spreadsheetName) {
-    console.log("getSpreadSheet " + spreadsheetName);
+    console.log("getSpreadSheet: " + spreadsheetName);
     return new Promise(function(fulfill, reject) {
       spreadsheet.getInfo(function(err, sheet_info) {
         if (err) {
@@ -144,6 +144,7 @@ var Spreadsheets = {
             return r.username == username;
           });
           if (row) {
+            console.log("found " + username + " at row " + row);
             fulfill(row);
           } else {
             reject(new Error('no row found with username: ' + username));
@@ -231,8 +232,7 @@ var Spreadsheets = {
       row[weekFormat(week)] = 1;
       return saveRow(row);
     }).catch(function(err) {
-      var msg = 'check in user error: ' + err;
-      console.log(msg);
+      console.log(err);
       self.logUncaught(username, msg)
     });
 

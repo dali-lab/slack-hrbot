@@ -178,7 +178,7 @@ var sendQRCodes = function(res) {
 
 var qrCheckIn = function(req) {
   var username = req.body.username;
-  console.log("username is: " + username);
+  console.log("\nchecking in user: " + username);
   spreadsheets.checkInUser(username, currentTerm);
 
 }
@@ -400,7 +400,6 @@ app.get('/send-qr-codes', function(req, res) {
 
 app.post('/qr-check-in', function(req, res) {
   res.send('will do!');
-  console.log('getting qr check in');
   qrCheckIn(req);
 });
 
