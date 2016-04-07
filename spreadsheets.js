@@ -72,7 +72,6 @@ var Spreadsheets = {
         return new Promise(function(fulfill, reject) {
           config = {}
           sheet.getRows(function(err, rows) {
-            console.log("HR rows: " + rows);
             if (err) {
               reject(err);
             } else {
@@ -98,7 +97,7 @@ var Spreadsheets = {
 
   // adds a row to sheet specified,  fields must exist
   addRowToSheet: function(data, sheet) {
-    console.log("addRowToSheet: " + data);
+    console.log("addRowToSheet");
     return new Promise(function(fulfill, reject) {
       sheet.addRow(data, function(err, result) {
         if (err) {
@@ -136,12 +135,12 @@ var Spreadsheets = {
   getRowByUsername: function(sheet, username) {
     console.log("getRowByUsername: " + username);
     return new Promise(function(fulfill, reject) {
+      console.log(JSON.stringify(sheet));
       sheet.getRows(function(err, rows) {
         if (err) {
           reject(err);
         } else {
           console.log("rows: " + rows);
-          console.log("searching for: " + username);
           var row = _.find(rows, function(r) {
             return r.username == username;
           });
@@ -237,7 +236,7 @@ var Spreadsheets = {
       return saveRow(row);
     }).catch(function(err) {
       console.log(err);
-      self.logUncaught(username, msg)
+      self.logUncaught(username, msg);
     });
 
   },
