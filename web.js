@@ -176,10 +176,11 @@ var sendQRCodes = function(res) {
   console.log(res);
 }
 
-var qrCheckIn = function(res) {
-  console.log(res.body.username);
+var qrCheckIn = function(req) {
+  console.log(req);
+  console.log(req.body.username);
   spreadsheets.checkInUser('test', currentTerm);
-  res.send('will do!');
+
 }
 
 //  when we first start refresh all slack stuff
@@ -398,8 +399,9 @@ app.get('/send-qr-codes', function(req, res) {
 });
 
 app.post('/qr-check-in', function(req, res) {
+  res.send('will do!');
   console.log('getting qr check in');
-  qrCheckIn(res);
+  qrCheckIn(req);
 });
 
 
