@@ -167,7 +167,7 @@ var refreshAndAskHours = function() {
     });
 };
 
-var sendQRCodes = function(res) {
+var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
     var code = qr.image(member, { type: 'png' });
@@ -411,6 +411,7 @@ app.get('/force-and-ask-hours', function(req, res) {
 });
 
 app.get('/send-qr-codes', function(req, res) {
+  res.send('will do!');
   console.log('sending qr codes');
   sendQRCodes(res);
 });
