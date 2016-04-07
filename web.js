@@ -171,7 +171,7 @@ var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
     var code = qr.image(member, { type: 'png' });
-    var msg = "Hi " + member + "!  I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!";
+    var msg = "Hi " + member + "!  I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!  http://imgur.com/ZlqjEce";
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
@@ -183,11 +183,7 @@ var sendQRCodes = function() {
       });
     } else {
       channel.send(msg);
-      channel.send(code);
     }
-  })
-  .catch(function(err) {
-    console.log(err);
   });
   // res.type('svg');
   // code.pipe(res);
