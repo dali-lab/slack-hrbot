@@ -139,6 +139,8 @@ var Spreadsheets = {
         if (err) {
           reject(err);
         } else {
+          console.log("rows: " + rows);
+          console.log("searching for: " + username);
           var row = _.find(rows, function(r) {
             return r.username == username;
           });
