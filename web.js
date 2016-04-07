@@ -397,7 +397,7 @@ app.get('/send-qr-codes', function(req, res) {
   sendQRCodes(res);
 });
 
-app.get('/qr-check-in', function(req, res) {
+app.post('/qr-check-in', function(req, res) {
   console.log('getting qr check in');
   qrCheckIn(res);
 });
