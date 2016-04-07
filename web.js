@@ -170,6 +170,7 @@ var refreshAndAskHours = function() {
 
 var sendQRCodes = function(res) {
   console.log('generating qr code!');
+  console.log('members: ' + currentMembers);
   var code = qr.image(new Date().toString(), { type: 'svg' });
   res.type('svg');
   code.pipe(res);
