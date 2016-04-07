@@ -140,7 +140,7 @@ var Spreadsheets = {
         if (err) {
           reject(err);
         } else {
-          console.log("rows: " + rows);
+          console.log("rows: " + rows + ',' + rows.count);
           var row = _.find(rows, function(r) {
             return r.username == username;
           });
