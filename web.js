@@ -17,6 +17,8 @@ var moment = require('moment-timezone');
 moment.tz.setDefault("America/New_York");
 var userDB = require('./user');
 var qr = require('qr-image');
+var Slack_Upload = require('node-slack-upload');
+var slack_upload = new Slack_Upload(token);
 
 console.log("dali hr-bot starting up");
 
@@ -196,20 +198,35 @@ var sendQRCodes = function() {
       channel.send(message);
     }
 
-    var r=request.post('https://slack.com/api/files.upload', function (err, res, body) {
+    slack_upload.uploadFile({
+      file: fs.createReadStream(path.join(__dirname, '..', 'README.md')),
+      filetype: 'post',
+      title: 'README',
+      initialComment: 'my comment',
+      channels: channel,
+    }, function(err) {
       if (err) {
-        console.log(err);
-      } else {
-        console.log(body);
+        console.error(err);
+      }
+      else {
+        console.log('done');
       }
     });
 
-    var form = r.form();
-    form.append('token', token);
-    // form.append('filename', 'qr-code.svg');
-    // form.append('file', qr_string);
-    form.append('file', './README.md');
-    // form.append('channels', channel);
+    // var r=request.post('https://slack.com/api/files.upload', function (err, res, body) {
+    //   if (err) {
+    //     console.log(err);
+    //   } else {
+    //     console.log(body);
+    //   }
+    // });
+    //
+    // var form = r.form();
+    // form.append('token', token);
+    // // form.append('filename', 'qr-code.svg');
+    // // form.append('file', qr_string);
+    // form.append('file', './README.md');
+    // // form.append('channels', channel);
 
     console.log(form);
 
