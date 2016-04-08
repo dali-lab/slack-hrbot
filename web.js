@@ -19,6 +19,7 @@ var userDB = require('./user');
 var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
 var slack_upload = new Slack_Upload(token);
+var fs = require("fs");
 
 console.log("dali hr-bot starting up");
 
