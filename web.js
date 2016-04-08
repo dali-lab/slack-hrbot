@@ -176,7 +176,7 @@ var sendQRCodes = function() {
     var qr_string = qr.imageSync(member, { type: 'svg' });
     // console.log(JSON.stringify(qr_string));
 
-    var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!";
+    var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check in system, talk to Pat!";
 
     // var message = {
     //   "type": "message",
@@ -197,21 +197,20 @@ var sendQRCodes = function() {
       });
     } else {
       channel.send(message);
-    }
-    console.log('channel: ' + channel.id);
 
     slack_upload.uploadFile({
-      file: fs.createReadStream('README.md'),
+      // file: fs.createReadStream('README.md'),
+      file: JSON.stringify(qr_string),
       filetype: 'post',
-      title: 'README',
-      initialComment: 'my comment',
+      title: 'QR Code',
+      initialComment: 'This will be handy!',
       channels: channel.id,
     }, function(err) {
       if (err) {
         console.error(err);
       }
       else {
-        console.log('done');
+        console.log('upload file done');
       }
     });
 
