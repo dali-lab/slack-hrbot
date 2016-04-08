@@ -18,7 +18,6 @@ moment.tz.setDefault("America/New_York");
 var userDB = require('./user');
 var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
-var slack_upload = new Slack_Upload(token);
 var fs = require("fs");
 
 console.log("dali hr-bot starting up");
@@ -34,6 +33,7 @@ var token = process.env.SLACK_BOT_TOKEN, // Add a bot at https://my.slack.com/se
   autoMark = true;
 
 var slack = new Slack(token, autoReconnect, autoMark);
+var slack_upload = new Slack_Upload(token);
 var currentTerm = '16w'; // default at start
 var currentWeek = 0; //default
 var currentMembers = [];
@@ -229,7 +229,7 @@ var sendQRCodes = function() {
     // form.append('file', './README.md');
     // // form.append('channels', channel);
 
-    console.log(form);
+    // console.log(form);
 
 
   });
