@@ -173,9 +173,6 @@ var refreshAndAskHours = function() {
 var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
-    var qr_string = qr.imageSync(member, { type: 'svg' });
-    // console.log(JSON.stringify(qr_string));
-
     var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check in system, talk to Pat!";
 
     // var message = {
@@ -199,9 +196,12 @@ var sendQRCodes = function() {
       channel.send(message);
     }
 
+    var qr_code = qr.image(member, { type: 'svg' });
+    // console.log(JSON.stringify(qr_string));
+
     slack_upload.uploadFile({
-      // file: fs.createReadStream('README.md'),
-      file: JSON.stringify(qr_string),
+      // file: fs.createReadStream('README.md'), // works
+      file: JSON.stringify(qr_code),
       filetype: 'post',
       title: 'QR Code',
       initialComment: 'This will come in handy!',
