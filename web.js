@@ -197,13 +197,14 @@ var sendQRCodes = function() {
       });
     } else {
       channel.send(message);
+    }
 
     slack_upload.uploadFile({
       // file: fs.createReadStream('README.md'),
       file: JSON.stringify(qr_string),
       filetype: 'post',
       title: 'QR Code',
-      initialComment: 'This will be handy!',
+      initialComment: 'This will come in handy!',
       channels: channel.id,
     }, function(err) {
       if (err) {
