@@ -175,14 +175,30 @@ var sendQRCodes = function() {
 
     var text = "Hi " + member + "! I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!";
 
-    var message = {
-      "type": "message",
-      "subtype": "file_share",
-      "text": text,
-      "file": JSON.stringify(qr_string),
-      "upload": true
-    }
+    var r=request.post('https://slack.com/api/files.upload', function (err, res, body) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(body);
+      }
+    });
 
+    var form = r.form();
+    form.append(token, token);
+    form.append('filename', 'qr-code.svg');
+    form.append(file, qr_string);
+
+    console.log(form);
+
+
+    // var message = {
+    //   "type": "message",
+    //   "subtype": "file_share",
+    //   "text": text,
+    //   "file": JSON.stringify(qr_string),
+    //   "upload": true
+    // }
+    //
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
