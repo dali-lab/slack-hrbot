@@ -206,6 +206,7 @@ var sendQRCodes = function() {
 
     var form = r.form();
     form.append('token', token);
+    // form.append('filename', 'qr-code.svg');
     // form.append('file', qr_string);
     form.append('file', './README.md');
     // form.append('channels', channel);
