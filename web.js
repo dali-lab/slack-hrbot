@@ -197,11 +197,13 @@ var sendQRCodes = function() {
     }
 
     var qr_code = qr.image(member, { type: 'svg' });
+    qr_code.pipe(fs.createWriteStream('qr_code.svg'));
+
     // console.log(JSON.stringify(qr_string));
 
     slack_upload.uploadFile({
-      // file: fs.createReadStream('README.md'), // works
-      file: JSON.stringify(qr_code),
+      file: fs.createReadStream('qr_code.svg'), // works
+      // file: JSON.stringify(qr_code),
       filetype: 'post',
       title: 'QR Code',
       initialComment: 'This will come in handy!',
