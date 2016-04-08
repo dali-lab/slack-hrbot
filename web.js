@@ -184,9 +184,9 @@ var sendQRCodes = function() {
     });
 
     var form = r.form();
-    form.append(token, token);
+    form.append('token', token);
     form.append('filename', 'qr-code.svg');
-    form.append(file, qr_string);
+    form.append('file', qr_string);
 
     console.log(form);
 
