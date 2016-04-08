@@ -200,7 +200,7 @@ var sendQRCodes = function() {
     }
 
     slack_upload.uploadFile({
-      file: fs.createReadStream(path.join(__dirname, '..', 'README.md')),
+      file: fs.createReadStream('README.md'),
       filetype: 'post',
       title: 'README',
       initialComment: 'my comment',
