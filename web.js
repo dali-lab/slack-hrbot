@@ -198,6 +198,7 @@ var sendQRCodes = function() {
     } else {
       channel.send(message);
     }
+    console.log('channel: ' + channel);
 
     slack_upload.uploadFile({
       file: fs.createReadStream('README.md'),
