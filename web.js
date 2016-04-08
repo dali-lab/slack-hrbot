@@ -170,8 +170,19 @@ var refreshAndAskHours = function() {
 var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
-    var code = qr.image(member, { type: 'png' });
-    var msg = "Hi " + member + "!  I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!  http://imgur.com/ZlqjEce";
+    var qr_string = qr.imageSync(member, { type: 'svg' });
+    console.log(JSON.stringify(qr_string));
+
+    var text = "Hi " + member + "! I'm your friendly hr-bot! Here's your qr code that you'll use to check in at the next DALI meeting! If you have questions or comments about the check in system, talk to Pat!";
+
+    var message = {
+      "type": "message",
+      "subtype": "file_share",
+      "text": text,
+      "file": JSON.stringify(qr_string),
+      "upload": true
+    }
+
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
@@ -179,10 +190,10 @@ var sendQRCodes = function() {
       console.log('getting id for %: %s', member, memberid);
       slack.openDM(slack.getUserByName(member).id, function(dm) {
         channel = slack.getDMByName(member);
-        channel.send(msg);
+        channel.send(message);
       });
     } else {
-      channel.send(msg);
+      channel.send(message);
     }
   });
   // res.type('svg');
