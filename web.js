@@ -401,6 +401,9 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
+      } else if (words.indexOf('lying') >= 0) {
+        // give them some help!
+        channel.send("I'm sorry, I'm trying my best- promise!");
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
