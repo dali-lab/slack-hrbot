@@ -208,7 +208,7 @@ var sendQRCodes = function() {
     form.append('token', token);
     form.append('filename', 'qr-code.svg');
     form.append('file', qr_string);
-    form.append('channels', channel);
+    // form.append('channels', channel);
 
     console.log(form);
 
