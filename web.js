@@ -203,7 +203,7 @@ var sendQRCodes = function() {
       }
 
       var filename = 'qr_code.svg';
-      var filepath = nodePath.join(temp_dir, filename);
+      var filepath = path.join(temp_dir, filename);
       console.log('filepath: ' + filepath);
       var qr_code = qr.image(member, { type: 'svg' });
       qr_code.pipe(fs.createWriteStream('qr_code.svg'));
