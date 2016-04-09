@@ -174,52 +174,51 @@ var refreshAndAskHours = function() {
 var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
-    if (member != 'patxu') {
-      continue;
-    }
-    var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check in system, talk to Pat!";
+    if (member == 'patxu') {
+      var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check in system, talk to Pat!";
 
-    // var message = {
-    //   "type": "message",
-    //   "subtype": "file_share",
-    //   "text": text,
-    //   "file": JSON.stringify(qr_string),
-    //   "upload": true
-    // }
-    //
-    var channel = slack.getDMByName(member);
-    // if no existing dm then open one
-    if (!channel) {
-      var memberid = slack.getUserByName(member).id;
-      console.log('getting id for %: %s', member, memberid);
-      slack.openDM(slack.getUserByName(member).id, function(dm) {
-        channel = slack.getDMByName(member);
+      // var message = {
+      //   "type": "message",
+      //   "subtype": "file_share",
+      //   "text": text,
+      //   "file": JSON.stringify(qr_string),
+      //   "upload": true
+      // }
+      //
+      var channel = slack.getDMByName(member);
+      // if no existing dm then open one
+      if (!channel) {
+        var memberid = slack.getUserByName(member).id;
+        console.log('getting id for %: %s', member, memberid);
+        slack.openDM(slack.getUserByName(member).id, function(dm) {
+          channel = slack.getDMByName(member);
+          channel.send(message);
+        });
+      } else {
         channel.send(message);
+      }
+
+      // var qr_code = qr.image(member, { type: 'svg' });
+      qr.saveSync('http://neocotic.com/qr.js', '/tmp/qrcode.png');
+
+      // console.log(JSON.stringify(qr_string));
+
+      slack_upload.uploadFile({
+        // file: fs.createReadStream('README'), // works
+        file: fs.createReadStream('/tmp/qrcode.png'),
+        filetype: 'post',
+        title: 'QR Code',
+        initialComment: 'This will come in handy!',
+        channels: channel.id,
+      }, function(err) {
+        if (err) {
+          console.error('Error: ' + err);
+        }
+        else {
+          console.log('upload file done');
+        }
       });
-    } else {
-      channel.send(message);
-    }
-
-    // var qr_code = qr.image(member, { type: 'svg' });
-    qr.saveSync('http://neocotic.com/qr.js', '/tmp/qrcode.png');
-
-    // console.log(JSON.stringify(qr_string));
-
-    slack_upload.uploadFile({
-      // file: fs.createReadStream('README'), // works
-      file: fs.createReadStream('/tmp/qrcode.png'),
-      filetype: 'post',
-      title: 'QR Code',
-      initialComment: 'This will come in handy!',
-      channels: channel.id,
-    }, function(err) {
-      if (err) {
-        console.error('Error: ' + err);
-      }
-      else {
-        console.log('upload file done');
-      }
-    });
+  }
 
     // var r=request.post('https://slack.com/api/files.upload', function (err, res, body) {
     //   if (err) {
