@@ -19,8 +19,6 @@ var userDB = require('./user');
 var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
 var fs = require("fs");
-var path = require("path");
-var temp_dir = path.join(process.cwd(), 'temp');
 
 console.log("dali hr-bot starting up");
 
@@ -173,10 +171,8 @@ var refreshAndAskHours = function() {
 };
 
 var sendQRCodes = function() {
-  console.log('generating qr code!');
-  if (!fs.existsSync(temp_dir)) {
-    fs.mkdirSync(temp_dir);
-  }
+  console.log('generating and sending qr codes!');
+
   currentMembers.forEach(function(member) {
     if (member == 'patxu') {
       var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
@@ -195,7 +191,6 @@ var sendQRCodes = function() {
       }
 
       var filename = 'qr_code.png';
-      var filepath = path.join(temp_dir, filename);
 
       fs.writeFileSync(filename, qr.imageSync(member));
 
@@ -210,7 +205,7 @@ var sendQRCodes = function() {
           console.error('Error: ' + err);
         }
         else {
-          console.log('upload file done');
+          console.log('sent qr code to %s', member);
         }
       });
 
