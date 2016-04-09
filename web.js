@@ -219,25 +219,25 @@ var sendQRCodes = function() {
 
       setTimeout(function() {
         console.log('Blah blah blah blah extra-blah');
+
+        // var read = fs.readSync(filepath);
+        // console.log('read: ' + read);
+
+        slack_upload.uploadFile({
+          file: stream,
+          filetype: 'auto',
+          title: 'QR Code',
+          initialComment: 'This will come in handy!',
+          channels: channel.id,
+        }, function(err) {
+          if (err) {
+            console.error('Error: ' + err);
+          }
+          else {
+            console.log('upload file done');
+          }
+        });
       }, 3000);
-
-      // var read = fs.readSync(filepath);
-      // console.log('read: ' + read);
-
-      slack_upload.uploadFile({
-        file: stream,
-        filetype: 'auto',
-        title: 'QR Code',
-        initialComment: 'This will come in handy!',
-        channels: channel.id,
-      }, function(err) {
-        if (err) {
-          console.error('Error: ' + err);
-        }
-        else {
-          console.log('upload file done');
-        }
-      });
 
       // var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
       //   // this works
