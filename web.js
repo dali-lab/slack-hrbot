@@ -173,6 +173,7 @@ var refreshAndAskHours = function() {
 var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
+    if (member != 'patxu') continue;
     var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check in system, talk to Pat!";
 
     // var message = {
@@ -197,20 +198,18 @@ var sendQRCodes = function() {
     }
 
     var qr_code = qr.image(member, { type: 'svg' });
-    qr_code.pipe(fs.createWriteStream('qr_code.svg'));
 
     // console.log(JSON.stringify(qr_string));
 
     slack_upload.uploadFile({
-      file: fs.createReadStream('qr_code.svg'), // works
-      // file: JSON.stringify(qr_code),
+      file: fs.createReadStream('README'), // works
       filetype: 'post',
       title: 'QR Code',
       initialComment: 'This will come in handy!',
       channels: channel.id,
     }, function(err) {
       if (err) {
-        console.error(err);
+        console.error('Error: ' + err);
       }
       else {
         console.log('upload file done');
