@@ -214,11 +214,16 @@ var sendQRCodes = function() {
   });
 }
 
+var notifyCheckIn = function(name) {
+  console.log(currentChannels);
+  console.log(currentGroups);
+}
+
 var qrCheckIn = function(req) {
   var username = req.body.username;
   console.log("\nchecking in user: " + username);
   spreadsheets.checkInUser(username, currentWeek, currentTerm);
-
+  notifyCheckIn(username);
 }
 
 //  when we first start refresh all slack stuff
