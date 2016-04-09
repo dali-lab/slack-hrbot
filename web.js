@@ -233,7 +233,7 @@ var sendQRCodes = function() {
       var form = r.form();
       form.append(token, token);
       form.append('filename', filename);
-      form.append(file, fs.createReadStream(filepath));
+      form.append('file', fs.createReadStream(filepath));
     }
 
     // var r=request.post('https://slack.com/api/files.upload', function (err, res, body) {
