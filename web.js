@@ -192,7 +192,7 @@ var sendQRCodes = function() {
 
       // write qr image with member name
       var filename = 'qr_code.png';
-      fs.writeFileSync(filename, qr.imageSync(member, margin: 6));
+      fs.writeFileSync(filename, qr.imageSync(member, {margin: 6}));
 
       // upload file to slack
       slack_upload.uploadFile({
