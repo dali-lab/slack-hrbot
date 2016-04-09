@@ -16,8 +16,7 @@ var moment = require('moment');
 var moment = require('moment-timezone');
 moment.tz.setDefault("America/New_York");
 var userDB = require('./user');
-// var qr = require('qr-image');
-var qr = require('qr-js');
+var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
 var fs = require("fs");
 
@@ -198,14 +197,14 @@ var sendQRCodes = function() {
         channel.send(message);
       }
 
-      // var qr_code = qr.image(member, { type: 'svg' });
-      qr.saveSync('http://neocotic.com/qr.js', '/tmp/qrcode.png');
+      var qr_code = qr.image(member, { type: 'svg' });
+      qr_code.pipe(fs.createWriteStream('/tmp/qr_code.svg'));
 
       // console.log(JSON.stringify(qr_string));
 
       slack_upload.uploadFile({
         // file: fs.createReadStream('README'), // works
-        file: fs.createReadStream('/tmp/qrcode.png'),
+        file: fs.createReadStream('/tmp/qr_code.svg'),
         filetype: 'post',
         title: 'QR Code',
         initialComment: 'This will come in handy!',
