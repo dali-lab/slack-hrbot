@@ -16,6 +16,7 @@
   "author": "Tim Tregubov",
   "license": "ISC",
   "dependencies": {
+    "@slack/client": "^2.3.0",
     "body-parser": "^1.14.2",
     "express": "^4.13.4",
     "google-spreadsheet": "^1.1.3",
