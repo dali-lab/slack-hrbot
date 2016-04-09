@@ -179,7 +179,7 @@ var sendQRCodes = function() {
   }
   currentMembers.forEach(function(member) {
     if (member == 'patxu') {
-      var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check-in system, talk to Pat!";
+      var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
 
       // var message = {
       //   "type": "message",
@@ -225,9 +225,9 @@ var sendQRCodes = function() {
         // console.log('read: ' + read);
 
         slack_upload.uploadFile({
-          file: stream,
+          file: qr_sync,
           filetype: 'auto',
-          title: 'QR Code',
+          title: 'Check-in QR Code',
           initialComment: 'This will come in handy!',
           channels: channel.id,
         }, function(err) {
@@ -238,7 +238,7 @@ var sendQRCodes = function() {
             console.log('upload file done');
           }
         });
-      }, 3000);
+      }, 1000);
 
       // var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
       //   // this works
