@@ -34,11 +34,6 @@ var token = process.env.SLACK_BOT_TOKEN, // Add a bot at https://my.slack.com/se
   autoReconnect = true,
   autoMark = true;
 
-var RtmClient = require('@slack/client').RtmClient;
-// var token = process.env.SLACK_API_TOKEN || '';
-var rtm = new RtmClient(token, {logLevel: 'debug'});
-rtm.start();
-
 var slack = new Slack(token, autoReconnect, autoMark);
 var slack_upload = new Slack_Upload(token);
 var currentTerm = '16w'; // default at start
@@ -214,15 +209,6 @@ var sendQRCodes = function() {
       qr_code.pipe(fs.createWriteStream(filepath));
 
       // console.log(JSON.stringify(qr_string));
-      var api = new WebClient(token);
-      var opts = {
-        filename: 'qr_code',
-        file: fs.createReadStream(filepath)
-      };
-      api.files.upload(opts, function (err, res) {
-        console.log(res);
-        // { ok: false, error: 'no_file_data' }
-      });
 
       slack_upload.uploadFile({
         // file: fs.createReadStream('README'), // works
