@@ -226,35 +226,20 @@ var sendQRCodes = function() {
       //   }
       // });
 
-      var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
-        // this works
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(body);
-        }
-      });
-
-      var form = r.form();
-      form.append(token, token);
-      form.append('filename', filename);
-      form.append('file', fs.createReadStream(filepath));
+      // var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
+      //   // this works
+      //   if (err) {
+      //     console.log(err);
+      //   } else {
+      //     console.log(body);
+      //   }
+      // });
+      //
+      // var form = r.form();
+      // form.append(token, token);
+      // form.append('filename', filename);
+      // form.append('file', fs.createReadStream(filepath));
     }
-
-    // var r=request.post('https://slack.com/api/files.upload', function (err, res, body) {
-    //   if (err) {
-    //     console.log(err);
-    //   } else {
-    //     console.log(body);
-    //   }
-    // });
-    //
-    // var form = r.form();
-    // form.append('token', token);
-    // // form.append('filename', 'qr-code.svg');
-    // // form.append('file', qr_string);
-    // form.append('file', './README.md');
-    // // form.append('channels', channel);
 
     // console.log(form);
 
