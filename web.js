@@ -253,6 +253,8 @@ slack.on('message', function(message) {
       if (moment().day() == 6) {
         refreshAndAskHours();
       }
+    } else if (user.name == 'hr-bot') {
+      // ignore
     } else if (type == 'message' && user.name == channel.name) {
 
       // direct message if channel and user are the same
