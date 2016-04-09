@@ -181,14 +181,6 @@ var sendQRCodes = function() {
     if (member == 'patxu') {
       var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
 
-      // var message = {
-      //   "type": "message",
-      //   "subtype": "file_share",
-      //   "text": text,
-      //   "file": JSON.stringify(qr_string),
-      //   "upload": true
-      // }
-      //
       var channel = slack.getDMByName(member);
       // if no existing dm then open one
       if (!channel) {
@@ -204,23 +196,11 @@ var sendQRCodes = function() {
 
       var filename = 'qr_code.png';
       var filepath = path.join(temp_dir, filename);
-      console.log('filepath: ' + filepath);
-      // var qr_code = qr.image(member, { type: 'png' });
-      // var write = fs.createWriteStream(filepath);
-      // qr_code.pipe(write);
 
-      // var qr_sync = qr.imageSync(member, { type: 'png' });
-      fs.writeFileSync(filepath, qr.imageSync(member));
-      fs.access(filepath, fs.R_OK, (err) => {
-        console.log(err ? 'no access!' : 'can read/write');
-      });
-      // console.log('sync: ' + JSON.stringify(qr_sync));
-
-      // var read = fs.readSync(filepath);
-      // console.log('read: ' + read);
+      fs.writeFileSync(filename, qr.imageSync(member));
 
       slack_upload.uploadFile({
-        file: fs.createReadStream(filepath),
+        file: fs.createReadStream(filename),
         filetype: 'auto',
         title: 'Check-in QR Code',
         initialComment: 'This will come in handy!',
@@ -234,27 +214,8 @@ var sendQRCodes = function() {
         }
       });
 
-      // var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
-      //   // this works
-      //   if (err) {
-      //     console.log(err);
-      //   } else {
-      //     console.log(body);
-      //   }
-      // });
-      //
-      // var form = r.form();
-      // form.append(token, token);
-      // form.append('filename', filename);
-      // form.append('file', fs.createReadStream(filepath));
     }
-
-    // console.log(form);
-
-
   });
-  // res.type('svg');
-  // code.pipe(res);
 }
 
 var qrCheckIn = function(req) {
