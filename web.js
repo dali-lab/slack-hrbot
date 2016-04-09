@@ -190,10 +190,11 @@ var sendQRCodes = function() {
         channel.send(message);
       }
 
+      // write qr image with member name
       var filename = 'qr_code.png';
+      fs.writeFileSync(filename, qr.imageSync(member, margin: 6));
 
-      fs.writeFileSync(filename, qr.imageSync(member));
-
+      // upload file to slack
       slack_upload.uploadFile({
         file: fs.createReadStream(filename),
         filetype: 'auto',
@@ -208,7 +209,6 @@ var sendQRCodes = function() {
           console.log('sent qr code to %s', member);
         }
       });
-
     }
   });
 }
@@ -232,7 +232,7 @@ slack.on('message', function(message) {
   userDB.getAll().then(function(allusers) {
 
     if (user.name == 'hr-bot') {
-      return; // ignore
+      return; // ignore from self
     }
 
     var type = message.type,
@@ -257,8 +257,6 @@ slack.on('message', function(message) {
       if (moment().day() == 6) {
         refreshAndAskHours();
       }
-    } else if (user.name == 'hr-bot') {
-      // ignore
     } else if (type == 'message' && user.name == channel.name) {
 
       // direct message if channel and user are the same
