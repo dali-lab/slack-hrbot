@@ -228,6 +228,11 @@ var sendQRCodes = function() {
 
       var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
         // this works
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(body);
+        }
       });
 
       var form = r.form();
