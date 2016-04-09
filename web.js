@@ -216,25 +216,23 @@ var sendQRCodes = function() {
       });
       // console.log('sync: ' + JSON.stringify(qr_sync));
 
-      setTimeout(function() {
-        // var read = fs.readSync(filepath);
-        // console.log('read: ' + read);
+      // var read = fs.readSync(filepath);
+      // console.log('read: ' + read);
 
-        slack_upload.uploadFile({
-          file: fs.createReadStream(filepath),
-          filetype: 'auto',
-          title: 'Check-in QR Code',
-          initialComment: 'This will come in handy!',
-          channels: channel.id,
-        }, function(err) {
-          if (err) {
-            console.error('Error: ' + err);
-          }
-          else {
-            console.log('upload file done');
-          }
-        });
-      }, 1000);
+      slack_upload.uploadFile({
+        file: fs.createReadStream(filepath),
+        filetype: 'auto',
+        title: 'Check-in QR Code',
+        initialComment: 'This will come in handy!',
+        channels: channel.id,
+      }, function(err) {
+        if (err) {
+          console.error('Error: ' + err);
+        }
+        else {
+          console.log('upload file done');
+        }
+      });
 
       // var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
       //   // this works
