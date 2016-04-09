@@ -205,16 +205,16 @@ var sendQRCodes = function() {
       var filename = 'qr_code.png';
       var filepath = path.join(temp_dir, filename);
       console.log('filepath: ' + filepath);
-      var qr_code = qr.image(member, { type: 'png' });
-      var write = fs.createWriteStream(filepath);
-      qr_code.pipe(write);
+      // var qr_code = qr.image(member, { type: 'png' });
+      // var write = fs.createWriteStream(filepath);
+      // qr_code.pipe(write);
 
-      var qr_sync = qr.imageSync(member, { type: 'png' });
-      console.log('sync: ' + JSON.stringify(qr_sync));
-
+      // var qr_sync = qr.imageSync(member, { type: 'png' });
+      fs.writeFileSync(filepath, qr.imageSync(member));
       fs.access(filepath, fs.R_OK, (err) => {
         console.log(err ? 'no access!' : 'can read/write');
       });
+      // console.log('sync: ' + JSON.stringify(qr_sync));
 
       setTimeout(function() {
         // var read = fs.readSync(filepath);
