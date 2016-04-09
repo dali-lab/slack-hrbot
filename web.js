@@ -208,9 +208,23 @@ var sendQRCodes = function() {
       var qr_code = qr.image(member, { type: 'svg' });
       qr_code.pipe(fs.createWriteStream(filepath));
 
+      slack_upload.uploadFile({
+        file: qr_code,
+        filetype: 'post',
+        title: 'QR Code',
+        initialComment: 'This will come in handy!',
+        channels: channel.id,
+      }, function(err) {
+        if (err) {
+          console.error('Error: ' + err);
+        }
+        else {
+          console.log('upload file done');
+        }
+      });
+
       // console.log(JSON.stringify(qr_string));
       slack_upload.uploadFile({
-        // file: fs.createReadStream('README'), // works
         file: fs.createReadStream(filepath),
         filetype: 'post',
         title: 'QR Code',
@@ -227,7 +241,6 @@ var sendQRCodes = function() {
 
       slack_upload.uploadFile({
         file: fs.createReadStream('./README.md'), // works
-        // file: fs.createReadStream(filepath),
         filetype: 'post',
         title: 'QR Code',
         initialComment: 'This will come in handy!',
