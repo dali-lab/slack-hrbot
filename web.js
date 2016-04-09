@@ -231,6 +231,10 @@ slack.on('message', function(message) {
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
 
+    if (user.name == 'hr-bot') {
+      return; // ignore
+    }
+
     var type = message.type,
       channel = slack.getChannelGroupOrDMByID(message.channel),
       user = slack.getUserByID(message.user),
