@@ -174,7 +174,9 @@ var refreshAndAskHours = function() {
 var sendQRCodes = function() {
   console.log('generating qr code!');
   currentMembers.forEach(function(member) {
-    if (member != 'patxu') continue;
+    if (member != 'patxu') {
+      continue;
+    }
     var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check in system, talk to Pat!";
 
     // var message = {
