@@ -206,10 +206,22 @@ var sendQRCodes = function() {
       var filepath = path.join(temp_dir, filename);
       console.log('filepath: ' + filepath);
       var qr_code = qr.image(member, { type: 'png' });
-      qr_code.pipe(fs.createWriteStream(filepath));
+      var write = fs.createWriteStream(filepath);
+      console.log('write stream: ' + write);
+      qr_code.pipe(write);
+
+      fs.access(filepath, fs.R_OK, (err) => {
+        console.log(err ? 'no access!' : 'can read/write');
+      });
+
+      var stream = fs.createReadStream(filepath);
+      console.log('stream: ' + stream);
+
+      var read = fs.readSync(filepath);
+      console.log('read: ' + read);
 
       slack_upload.uploadFile({
-        file: fs.createReadStream(filepath), // works
+        file: stream,
         filetype: 'auto',
         title: 'QR Code',
         initialComment: 'This will come in handy!',
