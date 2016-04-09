@@ -216,16 +216,12 @@ var sendQRCodes = function() {
         console.log(err ? 'no access!' : 'can read/write');
       });
 
-      var stream = fs.createReadStream(filepath);
-
       setTimeout(function() {
-        console.log('Blah blah blah blah extra-blah');
-
         // var read = fs.readSync(filepath);
         // console.log('read: ' + read);
 
         slack_upload.uploadFile({
-          file: qr_sync,
+          file: fs.createReadStream(filepath),
           filetype: 'auto',
           title: 'Check-in QR Code',
           initialComment: 'This will come in handy!',
