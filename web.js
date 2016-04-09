@@ -206,7 +206,7 @@ var sendQRCodes = function() {
       var filepath = path.join(temp_dir, filename);
       console.log('filepath: ' + filepath);
       var qr_code = qr.image(member, { type: 'svg' });
-      qr_code.pipe(fs.createWriteStream('qr_code.svg'));
+      qr_code.pipe(fs.createWriteStream(filepath));
 
       // console.log(JSON.stringify(qr_string));
 
