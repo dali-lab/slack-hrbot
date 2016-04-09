@@ -240,7 +240,7 @@ var sendQRCodes = function() {
       });
 
       slack_upload.uploadFile({
-        file: fs.createReadStream('./README.md'), // works
+        file: fs.createReadStream('./test-qr.jpg'), // works
         filetype: 'auto',
         title: 'QR Code',
         initialComment: 'This will come in handy!',
