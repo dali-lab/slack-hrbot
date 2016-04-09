@@ -210,6 +210,9 @@ var sendQRCodes = function() {
       console.log('write stream: ' + JSON.stringify(write));
       qr_code.pipe(write);
 
+      var qr_sync = qr.imageSync(member, { type: 'png' });
+      console.log('sync: ' + qr_sync);
+
       fs.access(filepath, fs.R_OK, (err) => {
         console.log(err ? 'no access!' : 'can read/write');
       });
