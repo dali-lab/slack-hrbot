@@ -209,22 +209,37 @@ var sendQRCodes = function() {
       qr_code.pipe(fs.createWriteStream(filepath));
 
       // console.log(JSON.stringify(qr_string));
+      slack_upload.uploadFile({
+        // file: fs.createReadStream('README'), // works
+        file: fs.createReadStream(filepath),
+        filetype: 'post',
+        title: 'QR Code',
+        initialComment: 'This will come in handy!',
+        channels: channel.id,
+      }, function(err) {
+        if (err) {
+          console.error('Error: ' + err);
+        }
+        else {
+          console.log('upload file done');
+        }
+      });
 
-      // slack_upload.uploadFile({
-      //   // file: fs.createReadStream('README'), // works
-      //   file: fs.createReadStream(filepath),
-      //   filetype: 'post',
-      //   title: 'QR Code',
-      //   initialComment: 'This will come in handy!',
-      //   channels: channel.id,
-      // }, function(err) {
-      //   if (err) {
-      //     console.error('Error: ' + err);
-      //   }
-      //   else {
-      //     console.log('upload file done');
-      //   }
-      // });
+      slack_upload.uploadFile({
+        file: fs.createReadStream('README'), // works
+        // file: fs.createReadStream(filepath),
+        filetype: 'post',
+        title: 'QR Code',
+        initialComment: 'This will come in handy!',
+        channels: channel.id,
+      }, function(err) {
+        if (err) {
+          console.error('Error: ' + err);
+        }
+        else {
+          console.log('upload file done');
+        }
+      });
 
       // var r = request.post('https://slack.com/api/files.upload', function (err, res, body) {
       //   // this works
@@ -471,7 +486,6 @@ app.get('/force-and-ask-hours', function(req, res) {
 
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  console.log('sending qr codes');
   sendQRCodes(res);
 });
 
