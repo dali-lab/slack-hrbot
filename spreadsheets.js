@@ -226,7 +226,7 @@ var Spreadsheets = {
           return self.getRowByUsername(spreadsheet, username);
         });
     }).then(function(row) {
-      console.log('check in user username: %s, term: %s', username, term);
+      console.log('updated check in for user: %s, term: %s', username, term);
       // now we have row set login
       row[weekFormat(week)] = 1;
       return saveRow(row);

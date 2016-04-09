@@ -191,6 +191,7 @@ var sendQRCodes = function() {
       }
 
       // write qr image with member name
+      // the margin prevents the image from getting cut off in the preview
       var filename = 'qr_code.png';
       fs.writeFileSync(filename, qr.imageSync(member, {margin: 6}));
 
