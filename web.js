@@ -207,18 +207,16 @@ var sendQRCodes = function() {
       console.log('filepath: ' + filepath);
       var qr_code = qr.image(member, { type: 'png' });
       var write = fs.createWriteStream(filepath);
-      console.log('write stream: ' + JSON.stringify(write));
       qr_code.pipe(write);
 
       var qr_sync = qr.imageSync(member, { type: 'png' });
-      console.log('sync: ' + qr_sync);
+      console.log('sync: ' + JSON.stringify(qr_sync));
 
       fs.access(filepath, fs.R_OK, (err) => {
         console.log(err ? 'no access!' : 'can read/write');
       });
 
       var stream = fs.createReadStream(filepath);
-      console.log('stream: ' + JSON.stringify(stream));
 
       setTimeout(function() {
         console.log('Blah blah blah blah extra-blah');
