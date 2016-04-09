@@ -19,6 +19,8 @@ var userDB = require('./user');
 var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
 var fs = require("fs");
+var path = require("path");
+var temp_dir = path.join(process.cwd(), 'temp');
 
 console.log("dali hr-bot starting up");
 
@@ -172,6 +174,9 @@ var refreshAndAskHours = function() {
 
 var sendQRCodes = function() {
   console.log('generating qr code!');
+  if (!fs.existsSync(temp_dir)) {
+    fs.mkdirSync(temp_dir);
+  }
   currentMembers.forEach(function(member) {
     if (member == 'patxu') {
       var message = "Hi " + member + "! I'm your friendly hr-bot! Here's your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments about the check-in system, talk to Pat!";
@@ -197,15 +202,17 @@ var sendQRCodes = function() {
         channel.send(message);
       }
 
+      var filename = 'qr_code.svg';
+      var filepath = nodePath.join(temp_dir, filename);
+      console.log('filepath: ' + filepath);
       var qr_code = qr.image(member, { type: 'svg' });
       qr_code.pipe(fs.createWriteStream('qr_code.svg'));
-      console.log(process.cwd());
 
       // console.log(JSON.stringify(qr_string));
 
       slack_upload.uploadFile({
         // file: fs.createReadStream('README'), // works
-        file: fs.createReadStream('/qr_code.svg'),
+        file: fs.createReadStream(filepath),
         filetype: 'post',
         title: 'QR Code',
         initialComment: 'This will come in handy!',
