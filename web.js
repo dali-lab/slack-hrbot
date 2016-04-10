@@ -213,6 +213,8 @@ var sendQRCodes = function() {
         console.log('sent qr code to %s', member);
       }
     });
+
+    fs.unlink(filename);
   });
 }
 
