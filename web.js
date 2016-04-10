@@ -174,12 +174,14 @@ var refreshAndAskHours = function() {
     });
 };
 
-var sendQRCodes = function() {
+var prepQRCodeMessages = function() {
   console.log('generating and sending qr codes!');
+  var i = 1;
 
   currentMembers.forEach(function(member) {
     var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
 
+    // get channel
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
@@ -187,35 +189,40 @@ var sendQRCodes = function() {
       console.log('getting id for %: %s', member, memberid);
       slack.openDM(slack.getUserByName(member).id, function(dm) {
         channel = slack.getDMByName(member);
-        channel.send(message);
       });
-    } else {
-      channel.send(message);
     }
 
-    // write qr image with member name
-    // the margin prevents the image from getting cut off in the preview
-    var filename = 'qr_code.png';
-    fs.writeFileSync(filename, qr.imageSync(member, {margin: 6}));
-
-    // upload file to slack
-    slack_upload.uploadFile({
-      file: fs.createReadStream(filename),
-      filetype: 'auto',
-      title: 'Check-in QR Code',
-      initialComment: 'This will come in handy!',
-      channels: channel.id,
-    }, function(err) {
-      if (err) {
-        console.error('Error: ' + err);
-      }
-      else {
-        console.log('sent qr code to %s', member);
-      }
-    });
-
-    fs.unlink(filename);
+    var filename = 'qr_code_' + member + '.png';
+    setTimeout(function() {sendQRCode(member, channel, filename, message);}, i * 2000);
+    i++;
   });
+}
+
+// send message and upload file to user
+var sendQRCode = function(member, channel, filename, message) {
+  channel.send(message);
+
+  // write qr image with member name
+  // the margin prevents the image from getting cut off in the preview
+  fs.writeFileSync(filename, qr.imageSync(member, {margin: 6}));
+
+  // upload
+  slack_upload.uploadFile({
+    file: fs.createReadStream(filename),
+    filetype: 'auto',
+    title: 'Check-in QR Code',
+    initialComment: 'This will come in handy!',
+    channels: channel.id,
+  }, function(err) {
+    if (err) {
+      console.error('Error: ' + err);
+    }
+    else {
+      console.log('sent qr code to %s', member);
+    }
+  });
+
+  fs.unlinkSync(filename);
 }
 
 var qrCheckIn = function(req) {
@@ -453,7 +460,7 @@ app.get('/force-and-ask-hours', function(req, res) {
 
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  sendQRCodes(res);
+  prepQRCodeMessages(res);
 });
 
 app.post('/qr-check-in', function(req, res) {
