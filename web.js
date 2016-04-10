@@ -228,8 +228,8 @@ var qrCheckIn = function(req) {
   } catch(err) {
     slack.openDM(slack.getUserByName('patxu').id, function(dm) {
       channel = slack.getDMByName('patxu');
-      channel.send('Someone just tried to scan in "%s", but I can\'t find ' +
-      'someone by that username. Help!', username);
+      channel.send('Someone just tried to scan in "' + username + '", but I ' +
+      'can\'t find a member by that username. Help!');
     });
   }
 }
