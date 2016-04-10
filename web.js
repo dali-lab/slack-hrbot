@@ -115,7 +115,9 @@ var refreshSlack = function() {
     });
 
   // checkInChannel
-  console.log('groups: ' + groups['check-in']);
+  console.log('groups: ' + groups.filter(function(g) {
+    return g.name == 'check-in';
+  }));
 
   var weekday = moment().day();
 
