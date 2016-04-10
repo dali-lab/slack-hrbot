@@ -176,13 +176,21 @@ var refreshAndAskHours = function() {
 
 var prepQRCodeMessages = function(username) {
   console.log('generating and sending qr codes!');
-  var i = 1;
-  // sendQRCode(username);
 
-  // currentMembers.forEach(function(member) {
-  //   setTimeout(function() {sendQRCode(member);}, i * 2000);
-  //   i++;
-  // });
+  if (username != null) {
+    try {
+      var user = slack.getUserByName(username); // exists
+      sendQRCode(username);
+    } catch(err) {
+      console.log('Could not find user ' + username);
+    }
+  }
+
+  var i = 1;
+  currentMembers.forEach(function(member) {
+    setTimeout(function() {sendQRCode(member);}, i * 2000);
+    i++;
+  });
 }
 
 // send message and upload file to user
@@ -463,9 +471,9 @@ app.get('/force-and-ask-hours', function(req, res) {
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
 
-  console.log("user is set to " + req.query.user);
+  var specificUser = req.query.user;
 
-  prepQRCodeMessages(res);
+  prepQRCodeMessages(specificUser);
 });
 
 app.post('/qr-check-in', function(req, res) {
