@@ -116,7 +116,6 @@ var refreshSlack = function() {
 
   // get checkInChannel
   checkInChannel = slack.getGroupByName('check-in');
-  console.log(slack.getUserByName('patx').real_name);
 
   var weekday = moment().day();
 
@@ -223,7 +222,16 @@ var qrCheckIn = function(req) {
   var username = req.body.username;
   console.log("\nchecking in user: " + username);
   spreadsheets.checkInUser(username, currentWeek, currentTerm);
-  checkInChannel.send(username + ' just checked in!');
+  try {
+    var name = slack.getUserByName(username).real_name;
+    checkInChannel.send(name + ' just checked in!');
+  } catch(err) {
+    slack.openDM(slack.getUserByName('patxu').id, function(dm) {
+      channel = slack.getDMByName('patxu');
+      channel.send('Someone just tried to scan in "%s", but I can\'t find ' +
+      'someone by that username. Help!', username);
+    });
+  }
 }
 
 //  when we first start refresh all slack stuff
