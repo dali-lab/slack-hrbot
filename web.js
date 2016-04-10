@@ -39,6 +39,7 @@ var currentWeek = 0; //default
 var currentMembers = [];
 var currentGroups = [];
 var currentChannels = [];
+var checkInChannel;
 
 // get tag format for an @mention
 var makeMention = function(userId) {
@@ -112,6 +113,9 @@ var refreshSlack = function() {
     .map(function(human) {
       return human.name;
     });
+
+  // checkInChannel
+  console.log('groups: ' + groups);
 
   var weekday = moment().day();
 
