@@ -177,7 +177,7 @@ var refreshAndAskHours = function() {
 var prepQRCodeMessages = function(username) {
   console.log('generating and sending qr codes!');
   var i = 1;
-  sendQRCode(username);
+  // sendQRCode(username);
 
   // currentMembers.forEach(function(member) {
   //   setTimeout(function() {sendQRCode(member);}, i * 2000);
@@ -462,12 +462,13 @@ app.get('/force-and-ask-hours', function(req, res) {
 
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
+
+  console.log("user is set to " + req.query.user);
+
   prepQRCodeMessages(res);
 });
 
 app.post('/qr-check-in', function(req, res) {
-  res.send("user is set to " + req.query.user);
-
   res.send('will do!');
   qrCheckIn(req);
 });
