@@ -116,7 +116,7 @@ var refreshSlack = function() {
 
   // get checkInChannel
   checkInChannel = slack.getGroupByName('check-in');
-  console.log(JSON.stringify(slack.getUserByName('patxu')));
+  console.log(slack.getUserByName('patxu'));
 
   var weekday = moment().day();
 
