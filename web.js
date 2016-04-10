@@ -114,9 +114,9 @@ var refreshSlack = function() {
       return human.name;
     });
 
-  // checkInChannel
+  // get checkInChannel
   checkInChannel = slack.getGroupByName('check-in');
-  console.log('humans: ' + getHumansForChannel(checkInChannel));
+  console.log(JSON.stringify(slack.getUserByName('patxu')));
 
   var weekday = moment().day();
 
@@ -219,16 +219,11 @@ var sendQRCodes = function() {
   });
 }
 
-var notifyCheckIn = function(name) {
-  console.log(currentChannels);
-  console.log(currentGroups);
-}
-
 var qrCheckIn = function(req) {
   var username = req.body.username;
   console.log("\nchecking in user: " + username);
   spreadsheets.checkInUser(username, currentWeek, currentTerm);
-  notifyCheckIn(username);
+  checkInChannel.send(username + ' just checked in!');
 }
 
 //  when we first start refresh all slack stuff
