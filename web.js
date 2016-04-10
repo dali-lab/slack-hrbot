@@ -177,20 +177,20 @@ var refreshAndAskHours = function() {
 var prepQRCodeMessages = function(username) {
   console.log('generating and sending qr codes!');
 
-  if (username != null) {
+  if (username != null) { // specific user
     try {
       var user = slack.getUserByName(username); // exists
       sendQRCode(username);
     } catch(err) {
       console.log('Could not find user ' + username);
     }
+  } else { // all users
+    var i = 1;
+    currentMembers.forEach(function(member) {
+      setTimeout(function() {sendQRCode(member);}, i * 2000);
+      i++;
+    });
   }
-
-  var i = 1;
-  currentMembers.forEach(function(member) {
-    setTimeout(function() {sendQRCode(member);}, i * 2000);
-    i++;
-  });
 }
 
 // send message and upload file to user
