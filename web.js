@@ -470,10 +470,7 @@ app.get('/force-and-ask-hours', function(req, res) {
 
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-
-  var specificUser = req.query.user;
-
-  prepQRCodeMessages(specificUser);
+  prepQRCodeMessages(req.query.user);
 });
 
 app.post('/qr-check-in', function(req, res) {
