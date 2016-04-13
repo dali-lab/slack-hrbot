@@ -206,11 +206,15 @@ var sendQRCode = function(member) {
     slack.openDM(slack.getUserByName(member).id, function(dm) {
       channel = slack.getDMByName(member);
       channel.send(message);
+      upload_file(channel, member);
     });
   } else {
     channel.send(message);
+    upload_file(channel, member);
   }
+}
 
+var upload_file = function(channel, member) {
   var filename = 'qr_code_' + member + '.png';
 
   // write qr image with member name
