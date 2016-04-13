@@ -240,8 +240,7 @@ var qrCheckIn = function(req) {
   console.log("\nchecking in user: " + username);
   spreadsheets.checkInUser(username, currentWeek, currentTerm);
   try {
-    var name = slack.getUserByName(username);
-    console.log("name: " + JSON.stringify(name));
+    var name = slack.getUserByName(username).first_name;
     if (name == '' ) {
       name = username;
       console.log(username + ' doesn\'t have a real name set up so I just ' +
