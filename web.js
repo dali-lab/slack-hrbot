@@ -251,7 +251,7 @@ var qrCheckIn = function(req) {
         ' for me? Try clicking on your name in the top left->Profile & account->' +
         'Edit (on the left side). Thanks:)')
     }
-    checkInChannel.send('*'name + '* just checked in!');
+    checkInChannel.send('*' + name + '* just checked in!');
   } catch(err) {
     slack.openDM(slack.getUserByName('patxu').id, function(dm) {
       channel = slack.getDMByName('patxu');
