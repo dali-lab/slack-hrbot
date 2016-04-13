@@ -143,7 +143,7 @@ var Spreadsheets = {
             return r.username == username;
           });
           if (row) {
-            console.log("found " + username + " at row " + JSON.stringify(row));
+            console.log("found " + username + " in a row");
             fulfill(row);
           } else {
             reject(new Error('no row found with username ' + username));
