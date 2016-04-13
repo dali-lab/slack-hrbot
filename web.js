@@ -241,14 +241,15 @@ var qrCheckIn = function(req) {
   spreadsheets.checkInUser(username, currentWeek, currentTerm);
   try {
     var name = slack.getUserByName(username).real_name;
-    console.log(name);
     if (name == '' ) {
       name = username;
+      console.log(username + ' doesn\'t have a real name set up so I just ' +
+      'poked them about it');
       channel = slack.getDMByName(username);
       channel.send('Hi ' + username + ', you just checked in but I noticed ' +
-    'you didn\' have a real name set up in Slack – would you mind doing that' +
-    ' for me? Try clicking on your name in the top left->Profile & account->' +
-    'Edit (on the left side). Thanks:)')
+        'you didn\'t have a real name set up in Slack – would you mind doing that' +
+        ' for me? Try clicking on your name in the top left->Profile & account->' +
+        'Edit (on the left side). Thanks:)')
     }
     checkInChannel.send(name + ' just checked in!');
   } catch(err) {
