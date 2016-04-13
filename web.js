@@ -205,12 +205,13 @@ var sendQRCode = function(member) {
     console.log('getting id for %: %s', member, memberid);
     slack.openDM(slack.getUserByName(member).id, function(dm) {
       channel = slack.getDMByName(member);
+      channel.send(message);
     });
+  } else {
+    channel.send(message);
   }
 
   var filename = 'qr_code_' + member + '.png';
-
-  channel.send(message);
 
   // write qr image with member name
   // the margin prevents the image from getting cut off in the preview
