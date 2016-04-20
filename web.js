@@ -278,12 +278,14 @@ var getFunMessage = function() {
   console.log('searching for ' + search_term);
   giphy.search({
     q: search_term,
+    limit: 1
     rating: 'g'
   }, function(err, res) {
     if (err) {
       console.log('Error: ' + err );
     } else {
       console.log(res);
+      console.log(res.data[0].url);
     }
     return ""
   });
