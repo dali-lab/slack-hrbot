@@ -19,6 +19,7 @@ var userDB = require('./user');
 var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
 var fs = require("fs");
+var giphy = require('giphy-api')();
 
 console.log("dali hr-bot starting up");
 
@@ -41,7 +42,7 @@ var currentGroups = [];
 var currentChannels = [];
 var checkInChannel;
 
-var funMessages = ['/giphy hi', '/giphy hello', '/giphy yay', '/giphy happy', '/giphy taylor swift', '/giphy welcome', '/giphy kitten', '/giphy puppy']
+var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy']
 
 // get tag format for an @mention
 var makeMention = function(userId) {
@@ -271,8 +272,16 @@ var qrCheckIn = function(req) {
   }
 }
 
+// get a fun message, currently using the giphy api
 var getFunMessage = function() {
-  return funMessages[Math.floor(Math.random() * funMessages.length)];
+  var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
+  giphy.search({
+    q: search_term,
+    rating: 'g'
+  }, function(err, res) {
+    console.log(res);
+    return ""
+  });
 }
 
 //  when we first start refresh all slack stuff
