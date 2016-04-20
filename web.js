@@ -279,15 +279,19 @@ var sendFunMessage = function(channel) {
   console.log('searching for ' + search_term);
   giphy.search({
     q: search_term,
-    limit: 1,
+    limit: 100,
     rating: 'g'
   }, function(err, res) {
     if (err) {
       console.log('Error: ' + err );
     } else {
-      var url = res.data[0].url;
-      console.log('found giphy url: ' + url);
-      channel.send(url);
+      if (res.data.length != 0) {
+        var url = res.data[Math.floor(Math.random() * res.data.length)].url;
+        console.log('found giphy url: ' + url);
+        channel.send(url);
+      } else {
+        console.log('couldn\'t find a gif with that query! :(');
+      }
     }
   });
 }
