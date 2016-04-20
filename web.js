@@ -278,7 +278,7 @@ var getFunMessage = function() {
   console.log('searching for ' + search_term);
   giphy.search({
     q: search_term,
-    limit: 1
+    limit: 1,
     rating: 'g'
   }, function(err, res) {
     if (err) {
