@@ -275,11 +275,16 @@ var qrCheckIn = function(req) {
 // get a fun message, currently using the giphy api
 var getFunMessage = function() {
   var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
+  console.log('searching for ' + search_term);
   giphy.search({
     q: search_term,
     rating: 'g'
   }, function(err, res) {
-    console.log(res);
+    if (err) {
+      console.log('Error: ' + err );
+    } else {
+      console.log(res);
+    }
     return ""
   });
 }
