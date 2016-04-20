@@ -261,6 +261,7 @@ var qrCheckIn = function(req) {
         'Edit (on the left side). Thanks:)')
     }
     checkInChannel.send('*' + name + '* just checked in!');
+    checkInChannel.send(getFunMessage());
   } catch(err) {
     slack.openDM(slack.getUserByName('patxu').id, function(dm) {
       channel = slack.getDMByName('patxu');
@@ -499,11 +500,6 @@ app.get('/send-qr-codes', function(req, res) {
 app.post('/qr-check-in', function(req, res) {
   res.send('will do!');
   qrCheckIn(req);
-});
-
-app.get('/send-fun-message', function(req, res) {
-  res.send('will do');
-  getFunMessage();
 });
 
 //sets up app
