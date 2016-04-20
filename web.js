@@ -19,6 +19,7 @@ var userDB = require('./user');
 var qr = require('qr-image');
 var Slack_Upload = require('node-slack-upload');
 var fs = require("fs");
+var giphy = require('giphy-api')();
 
 console.log("dali hr-bot starting up");
 
@@ -40,6 +41,8 @@ var currentMembers = [];
 var currentGroups = [];
 var currentChannels = [];
 var checkInChannel;
+
+var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy']
 
 // get tag format for an @mention
 var makeMention = function(userId) {
@@ -214,6 +217,7 @@ var sendQRCode = function(member) {
   }
 }
 
+// upload a file
 var upload_file = function(channel, member) {
   var filename = 'qr_code_' + member + '.png';
 
@@ -240,6 +244,7 @@ var upload_file = function(channel, member) {
   fs.unlinkSync(filename);
 }
 
+// check a user in from the iOS device
 var qrCheckIn = function(req) {
   var username = req.body.username;
   console.log("\nchecking in user: " + username);
@@ -257,6 +262,7 @@ var qrCheckIn = function(req) {
         'Edit (on the left side). Thanks:)')
     }
     checkInChannel.send('*' + name + '* just checked in!');
+    sendFunMessage(checkInChannel);
   } catch(err) {
     slack.openDM(slack.getUserByName('patxu').id, function(dm) {
       channel = slack.getDMByName('patxu');
@@ -264,6 +270,30 @@ var qrCheckIn = function(req) {
       'can\'t find a member by that username. Help!');
     });
   }
+}
+
+// send a fun message to a channel
+// currently sends a gif using the giphy api
+var sendFunMessage = function(channel) {
+  var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
+  console.log('searching for ' + search_term);
+  giphy.search({
+    q: search_term,
+    limit: 100,
+    rating: 'g'
+  }, function(err, res) {
+    if (err) {
+      console.log('Error: ' + err );
+    } else {
+      if (res.data.length != 0) {
+        var url = res.data[Math.floor(Math.random() * res.data.length)].url;
+        console.log('found giphy url: ' + url);
+        channel.send(url);
+      } else {
+        console.log('couldn\'t find a gif with that query! :(');
+      }
+    }
+  });
 }
 
 //  when we first start refresh all slack stuff
@@ -492,7 +522,6 @@ app.post('/qr-check-in', function(req, res) {
   res.send('will do!');
   qrCheckIn(req);
 });
-
 
 //sets up app
 var port = Number(process.env.PORT || 5000);
