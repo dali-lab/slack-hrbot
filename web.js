@@ -262,7 +262,7 @@ var qrCheckIn = function(req) {
         'Edit (on the left side). Thanks:)')
     }
     checkInChannel.send('*' + name + '* just checked in!');
-    checkInChannel.send(getFunMessage());
+    sendFunMessage(checkInChannel);
   } catch(err) {
     slack.openDM(slack.getUserByName('patxu').id, function(dm) {
       channel = slack.getDMByName('patxu');
@@ -272,8 +272,9 @@ var qrCheckIn = function(req) {
   }
 }
 
-// get a fun message, currently using the giphy api
-var getFunMessage = function() {
+// send a fun message to a channel
+// currently sends a gif using the giphy api
+var sendFunMessage = function(channel) {
   var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
   console.log('searching for ' + search_term);
   giphy.search({
@@ -284,10 +285,10 @@ var getFunMessage = function() {
     if (err) {
       console.log('Error: ' + err );
     } else {
-      console.log(res);
-      console.log(res.data[0].url);
+      var url = res.data[0].url;
+      console.log('found giphy url: ' + url);
+      channel.send(url);
     }
-    return ""
   });
 }
 
