@@ -179,6 +179,7 @@ var refreshAndAskHours = function() {
 
 var prepQRCodeMessages = function(username) {
   console.log('generating and sending qr codes!');
+  console.log(username);
 
   if (username !== null) { // specific user
     try {
