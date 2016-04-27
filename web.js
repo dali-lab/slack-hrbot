@@ -77,7 +77,7 @@ var refreshConfigs = function() {
   return spreadsheets.getHRConfigs().then(function(configs) {
     currentTerm = configs.currentTerm;
     currentWeek = configs.currentWeek;
-  })
+  });
 };
 
 
@@ -159,7 +159,7 @@ var refreshAndAskHours = function() {
       refreshSlack();
     })
     .then(function() {
-      return userDB.getAll()
+      return userDB.getAll();
     })
     .then(function(allusers) {
       // loop through users and contact WITH DELAY to prevent slack blocking
@@ -177,7 +177,7 @@ var refreshAndAskHours = function() {
 var prepQRCodeMessages = function(username) {
   console.log('generating and sending qr codes!');
 
-  if (username != null) { // specific user
+  if (username !== null) { // specific user
     try {
       var user = slack.getUserByName(username); // exists
       sendQRCode(username);
@@ -191,7 +191,7 @@ var prepQRCodeMessages = function(username) {
       i++;
     });
   }
-}
+};
 
 // send message and upload file to user
 var sendQRCode = function(member) {
@@ -212,7 +212,7 @@ var sendQRCode = function(member) {
     channel.send(message);
     upload_file(channel, member);
   }
-}
+};
 
 var upload_file = function(channel, member) {
   var filename = 'qr_code_' + member + '.png';
@@ -238,7 +238,7 @@ var upload_file = function(channel, member) {
   });
 
   fs.unlinkSync(filename);
-}
+};
 
 var qrCheckIn = function(req) {
   var username = req.body.username;
@@ -254,7 +254,7 @@ var qrCheckIn = function(req) {
       channel.send('Hi ' + username + ', you just checked in but I noticed ' +
         'you didn\'t have a real name set up in Slack – would you mind doing that' +
         ' for me? Try clicking on your name in the top left->Profile & account->' +
-        'Edit (on the left side). Thanks:)')
+        'Edit (on the left side). Thanks:)');
     }
     checkInChannel.send('*' + name + '* just checked in!');
   } catch(err) {
@@ -264,7 +264,7 @@ var qrCheckIn = function(req) {
       'can\'t find a member by that username. Help!');
     });
   }
-}
+};
 
 //  when we first start refresh all slack stuff
 slack.on('open', function() {
@@ -290,8 +290,8 @@ slack.on('message', function(message) {
 
     // in some cases may not be able to get user?
     if (!user) {
-      user = channel
-    };
+      user = channel;
+    }
 
     console.log('Received: %s %s %s %s %s', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
 
@@ -328,9 +328,9 @@ slack.on('message', function(message) {
 
       var words = text.trim().split(/\s+/).map(function(x) {
         return x.toLowerCase();
-      })
+      });
       var amount = (anum && anum.length > 0) ? anum.reduce(function(a, b) {
-        return parseFloat(a) + parseFloat(b)
+        return parseFloat(a) + parseFloat(b);
       }, 0) : null;
 
       if (words.indexOf('uploaded') >= 0 || words.indexOf('shared') >= 0) {
