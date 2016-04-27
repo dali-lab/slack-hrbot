@@ -190,7 +190,7 @@ var prepQRCodeMessages = function(username) {
   } else { // all users
     var i = 1;
     currentMembers.forEach(function(member) {
-      setTimeout(function() {sendQRCode(member);}, i * 2000);
+      setTimeout(function() {sendQRCode(member);}, i * 3000);
       i++;
     });
   }
@@ -234,7 +234,8 @@ var upload_file = function(channel, member) {
     channels: channel.id,
   }, function(err) {
     if (err) {
-      console.error('Error: ' + err);
+      console.error('Failed to send qr code due to error.');
+      console.error(err);
     }
     else {
       console.log('sent qr code to %s', member);
