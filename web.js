@@ -181,7 +181,7 @@ var prepQRCodeMessages = function(username) {
   console.log('generating and sending qr codes!');
   console.log(username);
 
-  if (username !== null) { // specific user
+  if (username !== undefined) { // specific user
     try {
       var user = slack.getUserByName(username); // exists
       sendQRCode(username);
