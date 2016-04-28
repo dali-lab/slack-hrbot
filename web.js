@@ -42,6 +42,7 @@ var currentGroups = [];
 var currentChannels = [];
 var checkInChannel;
 
+// giphy search terms
 var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy', 'food'];
 
 // get tag format for an @mention
@@ -309,6 +310,7 @@ slack.on('message', function(message) {
   userDB.getAll().then(function(allusers) {
 
     if (user.name == 'hr-bot') {
+      console.log('ignoring message from self');
       return; // ignore from self
     }
 
