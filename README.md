@@ -5,7 +5,6 @@ HRBOT asks lab members how many hours they've worked and keeps track of response
 
 ##Architecture at a glance:##
 
-
   - [nodejs](https://nodejs.org/en/) + [expressjs](http://expressjs.com/)
   - [google-spreadsheets](https://www.npmjs.com/package/google-spreadsheet) to store responses
   - persists some state about individual chats into [mongo](https://www.mongodb.com)
