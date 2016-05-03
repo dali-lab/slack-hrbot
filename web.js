@@ -472,6 +472,8 @@ slack.on('message', function(message) {
     } else {
       console.log('ignoring from ' + user.name + ': ' + text);
     }
+  }).catch(function(err) {
+    console.log(err);
   });
 
 });
