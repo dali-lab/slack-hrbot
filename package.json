@@ -36,6 +36,6 @@
     "jshint": "^2.9.2"
   },
   "scripts": {
-    "lint": "jshint **.js"
+    "test": "jshint **.js",
   }
 }
