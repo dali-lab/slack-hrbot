@@ -309,12 +309,6 @@ slack.on('message', function(message) {
 
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
-    console.log('got all users!');
-
-    if (user.name == 'hr-bot') {
-      console.log('ignoring message from self');
-      return; // ignore from self
-    }
 
     var type = message.type,
       channel = slack.getChannelGroupOrDMByID(message.channel),
@@ -325,7 +319,13 @@ slack.on('message', function(message) {
 
     // in some cases may not be able to get user?
     if (!user) {
+      console.log('Couldn\'t get user, using channel');
       user = channel;
+    }
+
+    if (user.name == 'hr-bot') {
+      console.log('ignoring message from self');
+      return; // ignore from self
     }
 
     console.log('Received: %s %s %s %s %s', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
@@ -473,7 +473,7 @@ slack.on('message', function(message) {
       console.log('ignoring from ' + user.name + ': ' + text);
     }
   }).catch(function(err) {
-    console.log(err);
+    console.log('Error while fetching users: ' + err);
   });
 
 });
