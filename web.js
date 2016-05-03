@@ -309,6 +309,7 @@ slack.on('message', function(message) {
 
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
+    console.log('got all users!');
 
     if (user.name == 'hr-bot') {
       console.log('ignoring message from self');
