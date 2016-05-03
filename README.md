@@ -1,4 +1,4 @@
-#slack-hrbot# ![travis_ci](https://travis-ci.org/dali-lab/slack-hrbot.svg?branch=travisci)
+#slack-hrbot ![travis_ci](https://travis-ci.org/dali-lab/slack-hrbot.svg?branch=travisci)
 
 
 HRBOT asks lab members how many hours they've worked and keeps track of responses in a google spreadsheet. It also has a qr-code check in system.
