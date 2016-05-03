@@ -275,10 +275,10 @@ var qrCheckIn = function(req) {
 };
 
 // send a fun message to a channel
-// currently sends a gif using the giphy api
+// currently sends a gif using the giphy api based on our search terms
 var sendFunMessage = function(channel) {
   var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
-  console.log('searching for ' + search_term);
+  console.log('searching for a ' + search_term + ' gif!');
   giphy.search({
     q: search_term,
     limit: 100,
@@ -305,6 +305,7 @@ slack.on('open', function() {
 
 // process any messages we get
 slack.on('message', function(message) {
+  console.log('received message!');
 
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
