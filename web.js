@@ -42,6 +42,7 @@ var currentGroups = [];
 var currentChannels = [];
 var checkInChannel;
 
+// giphy search terms
 var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy', 'food'];
 
 // get tag format for an @mention
@@ -274,10 +275,10 @@ var qrCheckIn = function(req) {
 };
 
 // send a fun message to a channel
-// currently sends a gif using the giphy api
+// currently sends a gif using the giphy api based on our search terms
 var sendFunMessage = function(channel) {
   var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
-  console.log('searching for ' + search_term);
+  console.log('searching for a ' + search_term + ' gif!');
   giphy.search({
     q: search_term,
     limit: 100,
@@ -308,10 +309,6 @@ slack.on('message', function(message) {
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
 
-    if (user.name == 'hr-bot') {
-      return; // ignore from self
-    }
-
     var type = message.type,
       channel = slack.getChannelGroupOrDMByID(message.channel),
       user = slack.getUserByID(message.user),
@@ -321,7 +318,13 @@ slack.on('message', function(message) {
 
     // in some cases may not be able to get user?
     if (!user) {
+      console.log('Couldn\'t get user, using channel');
       user = channel;
+    }
+
+    if (user.name == 'hr-bot') {
+      console.log('ignoring message from self');
+      return; // ignore from self
     }
 
     console.log('Received: %s %s %s %s %s', type, (channel.is_channel ? '#' : '') + channel.name, user.name, time, text);
@@ -468,6 +471,8 @@ slack.on('message', function(message) {
     } else {
       console.log('ignoring from ' + user.name + ': ' + text);
     }
+  }).catch(function(err) {
+    console.log('Error while fetching users: ' + err);
   });
 
 });
