@@ -31,5 +31,11 @@
     "slack-client": "^1.5.1",
     "supervisor": "^0.7.1",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.2"
+  },
+  "scripts": {
+    "lint": "jshint **.js"
   }
 }

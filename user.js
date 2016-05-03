@@ -4,7 +4,7 @@
 
 
 
-var mongoose = require ("mongoose")
+var mongoose = require ("mongoose");
 require('mongoose-moment')(mongoose);
 
 var uristring = process.env.MONGOLAB_URI;
@@ -40,7 +40,7 @@ var User = {
         {upsert: true, setDefaultsOnInsert: true},
         function (err, numAffected) {
           if (err) {
-            console.log("Error during updateAddUser: " + err)
+            console.log("Error during updateAddUser: " + err);
             reject(err);
           } else {
             fulfill();
@@ -83,7 +83,7 @@ var User = {
 
 
 
-}
+};
 
 
 

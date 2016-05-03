@@ -14,7 +14,7 @@ var google_creds = {
    "client_id": process.env.CLIENT_ID,
    "private_key_id": process.env.PRIVATE_KEY_ID,
    "type": process.env.TYPE
- }
+ };
 var spreadsheet = new GoogleSpreadsheet(process.env.SPREADSHEET);
 //var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
 var _ = require('underscore');
@@ -70,7 +70,7 @@ var Spreadsheets = {
       })
       .then(function(sheet) {
         return new Promise(function(fulfill, reject) {
-          config = {}
+          config = {};
           sheet.getRows(function(err, rows) {
             if (err) {
               reject(err);
@@ -149,7 +149,7 @@ var Spreadsheets = {
             reject(new Error('no row found with username ' + username));
           }
         }
-      })
+      });
     });
   },
 
@@ -189,7 +189,7 @@ var Spreadsheets = {
     }).catch(function(err) {
       var msg = 'updateWeekHours error: ' + err;
       console.log(msg);
-      self.logUncaught(username, msg)
+      self.logUncaught(username, msg);
     });
 
   },
@@ -202,7 +202,7 @@ var Spreadsheets = {
     }).then(function(row) {
       var weeks = weekKeys();
       var i = weeks.length - 1;
-      while (i >= 0 && row[weeks[i]] == '') {
+      while (i >= 0 && row[weeks[i]] === '') {
         i--;
       }
       console.log('last week filed: %s, for hrs: %s', weeks[i], row[weeks[i]]);
@@ -214,7 +214,7 @@ var Spreadsheets = {
   checkInUser: function(username, week, term) {
     var self = this;
     var spreadsheet;
-    var name = term + "-check-in"
+    var name = term + "-check-in";
     this.getSpreadSheet(name).then(function(sheet) {
       spreadsheet = sheet;
       return self.getRowByUsername(spreadsheet, username);
@@ -243,7 +243,7 @@ var Spreadsheets = {
   },
 
 
-}
+};
 
 
 // private methods and such:
@@ -256,13 +256,13 @@ var saveRow = function(row) {
       } else {
         fulfill(result);
       }
-    })
+    });
   });
-}
+};
 
 var weekFormat = function(week) {
   return "week" + week;
-}
+};
 
 var weekKeys = function() {
   var r = [];
@@ -270,7 +270,7 @@ var weekKeys = function() {
     r.push(weekFormat(i));
   }
   return r;
-}
+};
 
 
 module.exports = Spreadsheets;
