@@ -305,6 +305,7 @@ slack.on('open', function() {
 
 // process any messages we get
 slack.on('message', function(message) {
+  console.log('received message!');
 
   //updateuserdb first
   userDB.getAll().then(function(allusers) {
