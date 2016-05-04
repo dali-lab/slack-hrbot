@@ -5,7 +5,7 @@
   "main": "web.js",
   "scripts": {
     "start": "./node_modules/.bin/supervisor web.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jshint **.js",
     "refresh": "curl https://dali-hrbot.herokuapp.com/refresh-and-ask-hours",
     "force": "curl https://dali-hrbot.herokuapp.com/force-and-ask-hours"
   },
@@ -34,8 +34,5 @@
   },
   "devDependencies": {
     "jshint": "^2.9.2"
-  },
-  "scripts": {
-    "test": "jshint **.js"
   }
 }
