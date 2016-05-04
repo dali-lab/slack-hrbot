@@ -322,8 +322,8 @@ slack.on('message', function(message) {
       user = channel;
     }
 
-    if (user.name == 'hr-bot') {
-      console.log('ignoring message from self');
+    if (channel.name == 'check-in') {
+      console.log('ignoring message from check-in channel');
       return; // ignore from self
     }
 
