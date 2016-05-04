@@ -517,11 +517,13 @@ app.get('/force-and-ask-hours', function(req, res) {
   refreshAndAskHours();
 });
 
+// send qr codes to users
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
   prepQRCodeMessages(req.query.user);
 });
 
+// check in a scanned qr code
 app.post('/qr-check-in', function(req, res) {
   res.send('will do!');
   qrCheckIn(req);
