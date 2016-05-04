@@ -43,7 +43,7 @@ var currentChannels = [];
 var checkInChannel;
 
 // giphy search terms
-var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy', 'food'];
+var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy', 'food', 'bunny', 'otter', 'panda'];
 
 // get tag format for an @mention
 var makeMention = function(userId) {
@@ -235,10 +235,8 @@ var upload_file = function(channel, member) {
     channels: channel.id,
   }, function(err) {
     if (err) {
-      console.error('Failed to send qr code due to error.');
-      console.error(err);
-    }
-    else {
+      console.error('Failed to send qr code due to error (%s)', err);
+    } else {
       console.log('sent qr code to %s', member);
     }
   });
@@ -261,7 +259,7 @@ var qrCheckIn = function(req) {
       channel.send('Hi ' + username + ', you just checked in but I noticed ' +
         'you didn\'t have a real name set up in Slack – would you mind doing that' +
         ' for me? Try clicking on your name in the top left->Profile & account->' +
-        'Edit (on the left side). Thanks:)');
+        'Edit (on the right side). Thanks:)');
     }
     checkInChannel.send('*' + name + '* just checked in!');
     sendFunMessage(checkInChannel);
@@ -318,7 +316,7 @@ slack.on('message', function(message) {
 
     // in some cases may not be able to get user?
     if (!user) {
-      console.log('Couldn\'t get user, using channel');
+      console.log('Couldn\'t get user, using channel (%s)', channel);
       user = channel;
     }
 
