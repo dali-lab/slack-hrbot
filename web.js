@@ -16,10 +16,7 @@ var moment = require('moment');
 var moment = require('moment-timezone');
 moment.tz.setDefault("America/New_York");
 var userDB = require('./user');
-var qr = require('qr-image');
-var Slack_Upload = require('node-slack-upload');
-var fs = require("fs");
-var giphy = require('giphy-api')();
+var qr = require('./qr');
 
 console.log("dali hr-bot starting up");
 
@@ -34,16 +31,12 @@ var token = process.env.SLACK_BOT_TOKEN, // Add a bot at https://my.slack.com/se
   autoMark = true;
 
 var slack = new Slack(token, autoReconnect, autoMark);
-var slack_upload = new Slack_Upload(token);
-var currentTerm = '16w'; // default at start
+var currentTerm = '16w'; // default term
 var currentWeek = 0; //default
 var currentMembers = [];
 var currentGroups = [];
 var currentChannels = [];
 var checkInChannel;
-
-// giphy search terms
-var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy', 'food', 'bunny', 'otter', 'panda'];
 
 // get tag format for an @mention
 var makeMention = function(userId) {
@@ -178,124 +171,6 @@ var refreshAndAskHours = function() {
     });
 };
 
-var prepQRCodeMessages = function(username) {
-  console.log('generating and sending qr codes!');
-
-  if (username !== undefined) { // specific user
-    try {
-      var user = slack.getUserByName(username); // exists
-      sendQRCode(username);
-    } catch(err) {
-      console.log('Could not find user ' + username);
-    }
-  } else { // all users
-    var i = 1;
-    currentMembers.forEach(function(member) {
-      setTimeout(function() {sendQRCode(member);}, i * 3000);
-      i++;
-    });
-  }
-};
-
-// send message and upload file to user
-var sendQRCode = function(member) {
-  var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
-
-  // get channel
-  var channel = slack.getDMByName(member);
-  // if no existing dm then open one
-  if (!channel) {
-    var memberid = slack.getUserByName(member).id;
-    console.log('getting id for %: %s', member, memberid);
-    slack.openDM(slack.getUserByName(member).id, function(dm) {
-      channel = slack.getDMByName(member);
-      channel.send(message);
-      upload_file(channel, member);
-    });
-  } else {
-    channel.send(message);
-    upload_file(channel, member);
-  }
-};
-
-// upload a file
-var upload_file = function(channel, member) {
-  var filename = 'qr_code_' + member + '.png';
-
-  // write qr image with member name
-  // the margin prevents the image from getting cut off in the preview
-  fs.writeFileSync(filename, qr.imageSync(member, {margin: 6}));
-
-  // upload
-  slack_upload.uploadFile({
-    file: fs.createReadStream(filename),
-    filetype: 'auto',
-    title: 'Check-in QR Code',
-    initialComment: 'This will come in handy!',
-    channels: channel.id,
-  }, function(err) {
-    if (err) {
-      console.error('Failed to send qr code due to error (%s)', err);
-    } else {
-      console.log('sent qr code to %s', member);
-    }
-  });
-
-  fs.unlinkSync(filename);
-};
-
-// check a user in from the iOS device
-var qrCheckIn = function(req) {
-  var username = req.body.username;
-  console.log("\nchecking in user: " + username);
-  spreadsheets.checkInUser(username, currentWeek, currentTerm);
-  try {
-    var name = slack.getUserByName(username).profile.first_name;
-    if (!name) {
-      name = username;
-      console.log(username + ' doesn\'t have a real name set up so I just ' +
-      'poked them about it');
-      channel = slack.getDMByName(username);
-      channel.send('Hi ' + username + ', you just checked in but I noticed ' +
-        'you didn\'t have a real name set up in Slack – would you mind doing that' +
-        ' for me? Try clicking on your name in the top left->Profile & account->' +
-        'Edit (on the right side). Thanks:)');
-    }
-    checkInChannel.send('*' + name + '* just checked in!');
-    sendFunMessage(checkInChannel);
-  } catch(err) {
-    slack.openDM(slack.getUserByName('patxu').id, function(dm) {
-      channel = slack.getDMByName('patxu');
-      channel.send('Someone just tried to scan in "' + username + '", but I ' +
-      'can\'t find a member by that username. Help!');
-    });
-  }
-};
-
-// send a fun message to a channel
-// currently sends a gif using the giphy api based on our search terms
-var sendFunMessage = function(channel) {
-  var search_term = giphy_search[Math.floor(Math.random() * giphy_search.length)];
-  console.log('searching for a ' + search_term + ' gif!');
-  giphy.search({
-    q: search_term,
-    limit: 100,
-    rating: 'g'
-  }, function(err, res) {
-    if (err) {
-      console.log('Error: ' + err );
-    } else {
-      if (res.data.length !== 0) {
-        var url = res.data[Math.floor(Math.random() * res.data.length)].url;
-        console.log('found giphy url: ' + url);
-        channel.send(url);
-      } else {
-        console.log('couldn\'t find a gif with that query! :(');
-      }
-    }
-  });
-};
-
 //  when we first start refresh all slack stuff
 slack.on('open', function() {
   refreshSlack();
@@ -316,12 +191,15 @@ slack.on('message', function(message) {
 
     // in some cases may not be able to get user?
     if (!user) {
-      console.log('Couldn\'t get user, using channel (%s)', channel);
+      console.log('Couldn\'t get user, using channel (%s)', channel.name);
       user = channel;
     }
 
+    if (user.name == 'hr-bot') {
+      return;
+    }
+
     if (channel.name == 'check-in') {
-      console.log('ignoring message from check-in channel');
       return; // ignore from self
     }
 
@@ -504,7 +382,7 @@ app.get('/refresh-and-ask-hours', function(req, res) {
   console.log('refresh-and-ask-hours');
   // only asks once a week on saturday
   if (moment().day() == 6) {
-    console.log('refresh-and-ask-hours and ITS SATURDAY');
+    console.log('refresh-and-ask-hours and IT\'S SATURDAY');
     refreshAndAskHours();
   }
 });
@@ -517,14 +395,21 @@ app.get('/force-and-ask-hours', function(req, res) {
   refreshAndAskHours();
 });
 
+// send qr codes to users
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  prepQRCodeMessages(req.query.user);
+  if (moment().day() == 3) {
+    console.log('send-qr-codes and IT\'S WEDNESDAY!');
+    qr.prepQRCodeMessages(req.query.user, currentMembers, slack);
+  }
 });
 
+// check in a scanned qr code
 app.post('/qr-check-in', function(req, res) {
   res.send('will do!');
-  qrCheckIn(req);
+  var username = req.body.username;
+  qr.qrCheckIn(username, slack, checkInChannel);
+  spreadsheets.checkInUser(username, currentWeek, currentTerm);
 });
 
 //sets up app
