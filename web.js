@@ -387,11 +387,12 @@ app.get('/', function(req, res) {
 // make sure to set up a heroku scheduler or soemthing to hit this at least once a day
 app.get('/refresh-and-ask-hours', function(req, res) {
   res.send('will do!');
-  console.log('refresh-and-ask-hours');
   // only asks once a week on saturday
   if (moment().day() == 6) {
     console.log('refresh-and-ask-hours and IT\'S SATURDAY');
     refreshAndAskHours();
+  } else {
+    console.log('refresh-and-ask-hours but it\'s not the right day!');
   }
 });
 
@@ -415,6 +416,8 @@ app.get('/send-qr-codes', function(req, res) {
   if (moment().day() == 3) {
     console.log('send-qr-codes and IT\'S WEDNESDAY!');
     qr.prepQRCodeMessages(req.query.user, currentMembers, slack);
+  } else {
+    console.log('send-qr-codes but it\'s not the right day!');
   }
 });
 

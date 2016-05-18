@@ -25,14 +25,11 @@ var qr = {
     } else { // all users
       var i = 1;
       currentMembers.forEach(function(member) {
-        member = 'patxu';
-        if (member == 'patxu') {
-          var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
-          setTimeout(function()
-          {qr.sendQRCode(member, message, slack);},
-          i * 3000);
-          i++;
-        }
+        var message = "Hi " + member + "! I'm your friendly hr-bot! I'm sending you your QR code that you'll use to check in at the next DALI meeting. If you have questions or comments talk to Pat!";
+        setTimeout(function()
+        {qr.sendQRCode(member, message, slack);},
+        i * 3000);
+        i++;
       });
     }
   },
