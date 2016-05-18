@@ -409,6 +409,7 @@ app.get('/force-and-ask-hours', function(req, res) {
 app.get('/get-missing-hours', function(req, res) {
   res.send('will do!');
   console.log('get missing hours');
+  getMissingHours();
 });
 
 // send qr codes to users
