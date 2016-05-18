@@ -174,7 +174,8 @@ var refreshAndAskHours = function() {
 var getMissingHours = function() {
   currentMembers.forEach(function(member) {
     if (member == 'patxu') {
-
+      console.log('getting missing hours for ' + member);
+      console.log(spreadsheet.lastWeekWorked(member, currentTerm));
     }
   });
 };
