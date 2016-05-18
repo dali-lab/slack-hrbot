@@ -1,6 +1,6 @@
 //  small slackbot that asks users for their hours on a weekly basis
 //  and records the results in a google spreadsheet
-//  @author tim tregubov,  2016
+//  @author tim tregubov and pat xu,  2016
 
 var express = require("express");
 var logfmt = require("logfmt");
@@ -127,7 +127,7 @@ var refreshSlack = function() {
 
 // asks user for time
 var pokeMember = function(allusers, member) {
-  console.log('about to ask: ' + member);
+  console.log('asking hours from: ' + member);
   var timeouttime = moment().subtract(2, 'days');
   if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
     // do nothing if we've already asked this person recently
@@ -169,6 +169,14 @@ var refreshAndAskHours = function() {
     .catch(function(err) {
       console.log(err);
     });
+};
+
+var getMissingHours = function() {
+  currentMembers.forEach(function(member) {
+    if (member == 'patxu') {
+
+    }
+  });
 };
 
 //  when we first start refresh all slack stuff
@@ -291,7 +299,7 @@ slack.on('message', function(message) {
         } else if (amount > 60 || amount < 0) {
           console.log('invalid amount: ' + amount);
           // don't allow greater than 60 hours or negative numbers at all ever
-          channel.send("umm..." + amount + "? I doubt it!");
+          channel.send("umm... " + amount + "? I doubt it!");
         } else if (amount > 20) {
           console.log("high amount warning: " + amount);
           // warn users about being over 20 but record in case
@@ -323,7 +331,7 @@ slack.on('message', function(message) {
           userDB.updateAddUser(user.name, {
             confirmed: true
           });
-          channel.send("Okeedokee, thanks!");
+          channel.send("Okeedokee, thanks! \nTo see all your hours this term just ask me to 'show hours'.");
         }
       } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0) {
         // if they say no lets unset confirmation in case
@@ -393,6 +401,12 @@ app.get('/force-and-ask-hours', function(req, res) {
   res.send('will do!');
   console.log('force-and-ask-hours');
   refreshAndAskHours();
+});
+
+// gets users who have not filled out their hours for the past week
+app.get('/get-missing-hours', function(req, res) {
+  res.send('will do!');
+  console.log('get missing hours');
 });
 
 // send qr codes to users
