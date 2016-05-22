@@ -126,14 +126,14 @@ var refreshSlack = function() {
 };
 
 // asks user for time
-var pokeMember = function(allusers, member) {
+var pokeMember = function(allusers, member, addonMsg) {
   console.log('asking hours from: ' + member);
   var timeouttime = moment().subtract(2, 'days');
   if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
     // do nothing if we've already asked this person recently
     console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
   } else {
-    var msg = "Hi " + member + "!  I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
+    var msg = "Hi " + member + "! " + addonMsg;
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
@@ -146,6 +146,9 @@ var pokeMember = function(allusers, member) {
     } else {
       channel.send(msg);
     }
+    userDB.updateAddUser(member, {
+      confirmed: false
+    });
   }
 };
 
@@ -160,9 +163,10 @@ var refreshAndAskHours = function() {
     })
     .then(function(allusers) {
       // loop through users and contact WITH DELAY to prevent slack blocking
+      var msg = "I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
       var i = 1;
       currentMembers.forEach(function(member) {
-        setTimeout(function() {pokeMember(allusers, member);}, i * 2000);
+        setTimeout(function() {pokeMember(allusers, member, msg);}, i * 2000);
         i++;
       });
     })
@@ -171,11 +175,28 @@ var refreshAndAskHours = function() {
     });
 };
 
-var getMissingHours = function() {
-  currentMembers.forEach(function(member) {
-    if (member == 'patxu') {
-      console.log('getting missing hours for ' + member);
-      console.log(spreadsheets.lastWeekWorked(member, currentTerm));
+var getMissingHours = function(user) {
+  userDB.getAll().then(function(allusers) {
+    if (user !== undefined) { // bug just one user
+
+    } else { // bug everyone
+      currentMembers.forEach(function(member) {
+        if (member == 'patxu') {
+          var lastWeekWorked = allusers[member].lastWeekWorked;
+          if (!lastWeekWorked) { // no last week worked
+            console.log("no last week worked, adding it into the db");
+            userDB.updateAddUser(member, {
+              lastWeekWorked: 0
+            });
+          }
+
+          if (currentWeek != lastWeekWorked) {
+
+          }
+
+          console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
+        }
+      });
     }
   });
 };
@@ -343,8 +364,8 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
-      } else if (words.indexOf('lying') >= 0) {
-        // give them some help!
+      } else if (words.indexOf('/lie/i') >= 0 || words.indexOf('/lying/i') >= 0) {
+        // :(
         channel.send("I'm sorry, I'm trying my best- promise!");
       } else {
         // general confusions ensues

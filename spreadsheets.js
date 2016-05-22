@@ -195,6 +195,7 @@ var Spreadsheets = {
   },
 
   // gets the last week that a user had input hours for
+  // NOTE: doesn't work! needs a callback
   lastWeekWorked: function(username, term) {
     var self = this;
     var weeks = weekKeys();
