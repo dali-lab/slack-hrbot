@@ -181,12 +181,12 @@ var getMissingHours = function(user) {
 
     } else { // bug everyone
       currentMembers.forEach(function(member) {
-        if (member == 'patxu') {
+        if (member == 'tim') {
           var lastWeekWorked = allusers[member].lastWeekWorked;
           if (!lastWeekWorked) { // no last week worked
             console.log("no last week worked, adding it into the db");
+            lastWeekWorked = 0;
             userDB.updateAddUser(member, {
-              amount: 7,
               lastWeekWorked: 0
             });
           }
@@ -194,6 +194,16 @@ var getMissingHours = function(user) {
           if (currentWeek != lastWeekWorked) {
 
           }
+
+          var timeout = moment().subtract(1, 'week');
+          if (allusers[member].lastcontact.isBefore(timeout)) {
+            console.log("last entry was before this week");
+          }
+          timeout = moment().subtract(6, 'days');
+          if (allusers[member].lastcontact.isBefore(timeout)) {
+            console.log("last entry was before 6 days ago");
+          }
+
 
           console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
         }
