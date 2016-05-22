@@ -123,7 +123,7 @@ var Spreadsheets = {
 
       for (var i =0; i < weeks.length; i++) {
         if (row[weeks[i]]) {
-          allweeks += "week " + i + ": " + row[weeks[i]] + ", ";
+          allweeks += "week " + i + ": " + row[weeks[i]] + "\n";
         }
       }
 

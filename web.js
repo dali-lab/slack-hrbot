@@ -109,7 +109,8 @@ var refreshSlack = function() {
     })
     .map(function(human) {
       return human.name;
-    });
+    })
+    .sort();
 
   // get checkInChannel
   checkInChannel = slack.getGroupByName('check-in');
@@ -181,7 +182,7 @@ var getMissingHours = function(user) {
 
     } else { // bug everyone
       currentMembers.forEach(function(member) {
-        if (member == 'tim') {
+        if (member == 'patxu') {
           var lastWeekWorked = allusers[member].lastWeekWorked;
           if (!lastWeekWorked) { // no last week worked
             console.log("no last week worked, adding it into the db");
