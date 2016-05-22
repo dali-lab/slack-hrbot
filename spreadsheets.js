@@ -127,7 +127,7 @@ var Spreadsheets = {
         }
       }
 
-      return allweeks.slice(0, -2);
+      return allweeks.slice(0, -1);
     });
   },
 
