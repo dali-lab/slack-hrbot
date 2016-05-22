@@ -182,32 +182,25 @@ var getMissingHours = function(user) {
 
     } else { // bug everyone
       currentMembers.forEach(function(member) {
-        if (member == 'patxu') {
-          var lastWeekWorked = allusers[member].lastWeekWorked;
-          if (!lastWeekWorked) { // no last week worked
-            console.log("no last week worked, adding it into the db");
-            lastWeekWorked = 0;
-            userDB.updateAddUser(member, {
-              lastWeekWorked: 0
-            });
-          }
-
-          if (currentWeek != lastWeekWorked) {
-
-          }
-
-          var timeout = moment().subtract(1, 'week');
-          if (allusers[member].lastcontact.isBefore(timeout)) {
-            console.log("last entry was before this week");
-          }
-          timeout = moment().subtract(6, 'days');
-          if (allusers[member].lastcontact.isBefore(timeout)) {
-            console.log("last entry was before 6 days ago");
-          }
-
-
-          console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
+        var lastWeekWorked = allusers[member].lastWeekWorked;
+        if (!lastWeekWorked) { // no last week worked;
+          console.log("no last week worked, adding it into the db");
+          lastWeekWorked = 0;
+          userDB.updateAddUser(member, {
+            lastWeekWorked: 0
+          });
         }
+
+        if (currentWeek != lastWeekWorked) {
+
+        }
+
+        var timeout = moment().subtract(1, 'week');
+        if (allusers[member].lastcontact.isBefore(timeout)) {
+          console.log("last entry was before this week");
+        }
+
+        console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
       });
     }
   });
@@ -306,7 +299,7 @@ slack.on('message', function(message) {
         // show all hours for the term
         spreadsheets.getAllForUser(currentTerm, user.name)
           .then(function(result) {
-            console.log("hours" + result);
+            console.log("hours: " + result);
             channel.send('Your hours for ' + currentTerm + ' are: \n' + result + "\n to edit say:  change week 1 to 12 hours");
           })
           .catch(function(err) {
