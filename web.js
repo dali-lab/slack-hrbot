@@ -186,6 +186,7 @@ var getMissingHours = function(user) {
           if (!lastWeekWorked) { // no last week worked
             console.log("no last week worked, adding it into the db");
             userDB.updateAddUser(member, {
+              amount: 7,
               lastWeekWorked: 0
             });
           }
