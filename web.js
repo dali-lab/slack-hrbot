@@ -356,7 +356,8 @@ slack.on('message', function(message) {
           // if they confirm and not stale etc then lets record!
           spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
           userDB.updateAddUser(user.name, {
-            confirmed: true
+            confirmed: true,
+            lastWeekWorked: currentWeek
           });
           channel.send("Okeedokee, thanks! \nTo see all your hours this term just ask me to 'show hours'.");
         }
