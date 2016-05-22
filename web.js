@@ -198,9 +198,11 @@ var getMissingHours = function(user) {
         var timeout = moment().subtract(1, 'week');
         if (allusers[member].lastcontact.isBefore(timeout)) {
           console.log("last entry was before this week");
+        } else {
+          console.log("already filled out this week's hours");
         }
 
-        console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
+        // console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
       });
     }
   });
@@ -357,7 +359,7 @@ slack.on('message', function(message) {
           spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
           userDB.updateAddUser(user.name, {
             confirmed: true,
-            lastWeekWorked: currentWeek
+            // lastWeekWorked: currentWeek
           });
           channel.send("Okeedokee, thanks! \nTo see all your hours this term just ask me to 'show hours'.");
         }
