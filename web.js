@@ -182,18 +182,18 @@ var getMissingHours = function(user) {
 
     } else { // bug everyone
       currentMembers.forEach(function(member) {
-        var lastWeekWorked = allusers[member].lastWeekWorked;
-        if (!lastWeekWorked) { // no last week worked;
-          console.log("no last week worked, adding it into the db");
-          lastWeekWorked = 0;
-          userDB.updateAddUser(member, {
-            lastWeekWorked: 0
-          });
-        }
-
-        if (currentWeek != lastWeekWorked) {
-
-        }
+        // var lastWeekWorked = allusers[member].lastWeekWorked;
+        // if (!lastWeekWorked) { // no last week worked;
+        //   console.log("no last week worked, adding it into the db");
+        //   lastWeekWorked = 0;
+        //   userDB.updateAddUser(member, {
+        //     lastWeekWorked: 0
+        //   });
+        // }
+        //
+        // if (currentWeek != lastWeekWorked) {
+        //
+        // }
 
         var timeout = moment().subtract(1, 'week');
         if (allusers[member].lastcontact.isBefore(timeout)) {
