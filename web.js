@@ -197,10 +197,13 @@ var getMissingHours = function(user) {
 
         console.log("checking last hours for " + member);
         var timeout = moment().subtract(1, 'week');
-        if (allusers[member].lastcontact.isBefore(timeout)) {
+        lastcontact = allusers[member].lastcontact;
+        if (lastcontact && lastcontact.isBefore(timeout)) {
           console.log("last entry was before this week");
-        } else {
+        } else if (lastcontact && !lastcontact.isBefore(timeout)) {
           console.log("already filled out this week's hours");
+        } else {
+          console.log("no last contact");
         }
 
         // console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
