@@ -21,7 +21,8 @@ var userSchema = new mongoose.Schema({
   name: String,
   lastcontact: 'Moment',
   confirmed: false,
-  amount: 0
+  amount: 0,
+  lastWeekWorked: 0
 });
 // and the compiled model
 var userModel = mongoose.model('User', userSchema);
