@@ -181,6 +181,7 @@ var getMissingHours = function(user) {
     if (user !== undefined) { // bug just one user
 
     } else { // bug everyone
+      var i = 1;
       currentMembers.forEach(function(member) {
         var lastWeekWorked = 0;
         try {
@@ -200,10 +201,23 @@ var getMissingHours = function(user) {
         }
 
         if (currentWeek != lastWeekWorked) {
-          console.log("poke %s for not filling out hours for week %s", member, currentWeek);
-        }
+          try {
+            var timeout = moment().subtract(1, 'week');
+            if (allusers[member].lastcontact.isAfter(timeout) && allusers[member].confirmed) {
+              console.log("updating lastWeekWorked for %s", member);
+              userDB.updateAddUser(member, {
+                lastWeekWorked: 8
+              });
+            }
+          } catch (err) {
+          }
 
-        console.log("%s's curent week: %d, last week %d", member, currentWeek, lastWeekWorked);
+
+          console.log("poke %s for not filling out hours for week %s", member, currentWeek);
+          var msg = "Can you please let me know how many hours you worked for this past week (week " + currentWeek + " of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– a human will ask you the next time!";
+          // setTimeout(function() {pokeMember(allusers, member, msg);}, i * 2000);
+          i++;
+        }
       });
     }
   });
