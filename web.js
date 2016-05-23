@@ -182,34 +182,22 @@ var getMissingHours = function(user) {
 
     } else { // bug everyone
       currentMembers.forEach(function(member) {
-        // var lastWeekWorked = allusers[member].lastWeekWorked;
-        // if (!lastWeekWorked) { // no last week worked;
-        //   console.log("no last week worked, adding it into the db");
-        //   lastWeekWorked = 0;
-        //   userDB.updateAddUser(member, {
-        //     lastWeekWorked: 0
-        //   });
-        // }
-        //
-        // if (currentWeek != lastWeekWorked) {
-        //
-        // }
-
-        console.log("checking last hours for " + member);
-        var timeout = moment().subtract(1, 'week');
-        console.log(allusers);
-        var lastcontact = allusers[member].lastcontact;
-        console.log(2);
-        console.log(lastcontact);
-        if (lastcontact && lastcontact.isBefore(timeout)) {
-          console.log("last entry was before this week");
-        } else if (lastcontact && !lastcontact.isBefore(timeout)) {
-          console.log("already filled out this week's hours");
-        } else {
-          console.log("no last contact");
+        var lastWeekWorked = 0;
+        try {
+          lastWeekWorked = allusers[member].lastWeekWorked;
+        } catch (err) {
+          console.log(err);
+          console.log("adding user to db");
+          userDB.updateAddUser(member, {
+            lastWeekWorked: 0
+          });
         }
 
-        // console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
+        if (currentWeek != lastWeekWorked) {
+
+        }
+
+        console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
       });
     }
   });
@@ -379,9 +367,6 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
-      } else if (words.indexOf('/lie/i') >= 0 || words.indexOf('/lying/i') >= 0) {
-        // :(
-        channel.send("I'm sorry, I'm trying my best- promise!");
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
