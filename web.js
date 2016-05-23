@@ -192,7 +192,7 @@ var getMissingHours = function(user) {
           });
         }
 
-        if (!lastWeekWorked) {
+        if (lastWeekWorked.isNaN()) {
           console.log("lastWeekWorked is NaN, adding to db");
           userDB.updateAddUser(member, {
             lastWeekWorked: 0
@@ -200,7 +200,7 @@ var getMissingHours = function(user) {
         }
 
         if (currentWeek != lastWeekWorked) {
-
+          console.log("poke member %s for not filling out hours for %s", member, currentWeek);
         }
 
         console.log("%s's curent week: %d, last week %d", member, currentWeek, lastWeekWorked);
