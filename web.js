@@ -205,7 +205,7 @@ var getMissingHours = function(user) {
           if (diff !== 0) {
             console.log("poke %s for not filling out hours for week %s", member, currentWeek);
             var msg = "Can you please let me know how many hours you worked for this past week (week " + currentWeek + " of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you!";
-            // setTimeout(function() {pokeMember(allusers, member, msg);}, i * 2000);
+            setTimeout(function() {pokeMember(allusers, member, msg);}, i * 2000);
             i++;
           }
         }
@@ -353,7 +353,7 @@ slack.on('message', function(message) {
             confirmed: false,
             amount: amount
           });
-          channel.send("Ok! I'm putting down that you worked *" + amount + "* hours during week " + currentWeek + ", yes/no?");
+          channel.send("Ok! I'm putting down that you worked *" + amount + "* hours during week *" + currentWeek + "*, yes/no?");
         }
         console.log('end processing');
       } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
@@ -368,14 +368,14 @@ slack.on('message', function(message) {
             confirmed: true,
             lastWeekWorked: currentWeek
           });
-          channel.send("Okeedokee, thanks! \nTo see all your hours this term just ask me to 'show hours'.");
+          channel.send("Okeedokee, thanks!\nTo see all your hours this term just ask me to 'show hours'.");
         }
       } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0) {
         // if they say no lets unset confirmation in case
         userDB.updateAddUser(user.name, {
           confirmed: false
         });
-        channel.send("Ok, so just send me the number please.");
+        channel.send("Ok, so just send me the number please.\nTo see all your hours this term just ask me to 'show hours'.");
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
