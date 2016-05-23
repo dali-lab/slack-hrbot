@@ -197,7 +197,7 @@ var getMissingHours = function(user) {
 
         console.log("checking last hours for " + member);
         var timeout = moment().subtract(1, 'week');
-        lastcontact = allusers[member].lastcontact;
+        var lastcontact = allusers[member].lastcontact;
         console.log(lastcontact);
         if (lastcontact && lastcontact.isBefore(timeout)) {
           console.log("last entry was before this week");
