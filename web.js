@@ -186,8 +186,14 @@ var getMissingHours = function(user) {
         try {
           lastWeekWorked = allusers[member].lastWeekWorked;
         } catch (err) {
-          console.log(err);
-          console.log("adding user to db");
+          console.log("user doesn't have a lastWeekWorked, adding to db");
+          userDB.updateAddUser(member, {
+            lastWeekWorked: 0
+          });
+        }
+
+        if (!lastWeekWorked) {
+          console.log("user doesn't have a lastWeekWorked, adding to db");
           userDB.updateAddUser(member, {
             lastWeekWorked: 0
           });
@@ -197,7 +203,7 @@ var getMissingHours = function(user) {
 
         }
 
-        console.log("curent week: %d, last week %d", currentWeek, lastWeekWorked);
+        console.log("%s's curent week: %d, last week %d", member, currentWeek, lastWeekWorked);
       });
     }
   });
