@@ -192,6 +192,7 @@ var getMissingHours = function(user) {
           });
         }
 
+        console.log(lastWeekWorked);
         if (lastWeekWorked.isNaN()) {
           console.log("lastWeekWorked is NaN, adding to db");
           userDB.updateAddUser(member, {
