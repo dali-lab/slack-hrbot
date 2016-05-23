@@ -192,7 +192,6 @@ var getMissingHours = function(user) {
           });
         }
 
-        console.log(lastWeekWorked);
         if (isNaN(lastWeekWorked)) {
           console.log("lastWeekWorked is NaN, adding to db");
           userDB.updateAddUser(member, {
@@ -201,7 +200,7 @@ var getMissingHours = function(user) {
         }
 
         if (currentWeek != lastWeekWorked) {
-          console.log("poke member %s for not filling out hours for %s", member, currentWeek);
+          console.log("poke %s for not filling out hours for week %s", member, currentWeek);
         }
 
         console.log("%s's curent week: %d, last week %d", member, currentWeek, lastWeekWorked);
@@ -323,7 +322,8 @@ slack.on('message', function(message) {
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
             confirmed: true,
-            amount: altamount
+            amount: altamount,
+            lastWeekWorked: Math.max(currentWeek, altweek)
           });
           spreadsheets.updateWeekHours(user.name, altamount, altweek, currentTerm);
           channel.send("Ok! Done! You changed week " + altweek + " to " + altamount + " hours.");
@@ -361,7 +361,7 @@ slack.on('message', function(message) {
           spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
           userDB.updateAddUser(user.name, {
             confirmed: true,
-            // lastWeekWorked: currentWeek
+            lastWeekWorked: currentWeek
           });
           channel.send("Okeedokee, thanks! \nTo see all your hours this term just ask me to 'show hours'.");
         }
