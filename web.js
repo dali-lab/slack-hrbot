@@ -183,8 +183,10 @@ var getMissingHours = function(user) {
     } else { // bug everyone
       currentMembers.forEach(function(member) {
         var lastWeekWorked = 0;
+        console.log(1);
         try {
           lastWeekWorked = allusers[member].lastWeekWorked;
+          console.log(2);
         } catch (err) {
           console.log("user doesn't have a lastWeekWorked, adding to db");
           userDB.updateAddUser(member, {
@@ -192,6 +194,7 @@ var getMissingHours = function(user) {
           });
         }
 
+        console.log(3);
         console.log(lastWeekWorked);
         if (lastWeekWorked.isNaN()) {
           console.log("lastWeekWorked is NaN, adding to db");
