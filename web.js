@@ -344,7 +344,7 @@ slack.on('message', function(message) {
             confirmed: false,
             amount: amount
           });
-          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week " + currentWeek + ", yes/no?");
+          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week *" + currentWeek + "*, yes/no?");
         } else {
           console.log("confirm %s, %d, %d", user.name, currentWeek, amount);
           // otherwise confirm that this is all correct
