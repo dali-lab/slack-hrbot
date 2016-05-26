@@ -388,7 +388,7 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
-      } else if (words.indexOf('/thanks/i') >= 0) {
+      } else if (text.search(/thanks/i) >= 0) {
         channel.send("You're welcome!");
       } else {
         // general confusions ensues
