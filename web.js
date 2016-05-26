@@ -353,7 +353,7 @@ slack.on('message', function(message) {
             confirmed: false,
             amount: amount
           });
-          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week *" + currentWeek + "*, yes/no?");
+          channel.send("Oh! Are you sure you want me to put down *" + amount + "* hours during week *" + currentWeek + "*, yes/no? Most DALI members are limited to 20 hours a week. ");
         } else {
           console.log("confirm %s, %d, %d", user.name, currentWeek, amount);
           // otherwise confirm that this is all correct
@@ -388,6 +388,8 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
+      } else if (words.indexOf('/thanks/i') >= 0) {
+        channel.send("You're welcome!")
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
