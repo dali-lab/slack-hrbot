@@ -292,6 +292,10 @@ slack.on('message', function(message) {
         // for the special casae of do not disturb mode just reset anum to nothing
         channel.send('Sleep Tight!');
         anum = "";
+      } else if (text.search(/hey/i) >= 0 || text.search(/hello/i) >= 0 || text.search(/hi/i) >= 0) {
+        channel.send("Hey there! You can tell me how many hours you worked this week, check your past input history ('show hours'), and update previous hours worked.");
+      } else if (text.search(/thanks/i) >= 0) {
+        channel.send("You're welcome!");
       } else if (text.search(/fuck/i) >= 0) {
         channel.send("RUDE.");
       } else if (text.search(/kronos/i) >= 0) {
@@ -388,10 +392,6 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
-      } else if (text.search(/hey/i) >= 0 || text.search(/hello/i) >= 0 || text.search(/hi/i) >= 0) {
-        channel.send("Hey there! You can tell me how many hours you worked this week, check your past input history ('show hours'), and update previous hours worked.");
-      } else if (text.search(/thanks/i) >= 0) {
-        channel.send("You're welcome!");
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
