@@ -324,11 +324,20 @@ slack.on('message', function(message) {
           var altamount = parseFloat(matches[2]);
           var altweek = parseInt(matches[1]);
           console.log('got changes for week: %d with hours %d for user %s', altweek, altamount, user.name);
+          var lastWeekWorked = 0;
+          try {
+            lastWeekWorked = allusers[user.name].lastWeekWorked;
+          } catch (err) {
+            console.log("user doesn't have a lastWeekWorked, adding to db");
+            userDB.updateAddUser(user.name, {
+              lastWeekWorked: 0
+            });
+          }
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
             confirmed: true,
             amount: altamount,
-            lastWeekWorked: Math.max(currentWeek, altweek)
+            lastWeekWorked: Math.max(lastWeekWorked, altweek)
           });
           spreadsheets.updateWeekHours(user.name, altamount, altweek, currentTerm);
           channel.send("Ok! Done! You changed week " + altweek + " to " + altamount + " hours.");
