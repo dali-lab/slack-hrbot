@@ -204,6 +204,8 @@ var getMissingHours = function(user) {
             setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
             i++;
           }
+        } else {
+          console.log("messaging %s about hours", member);
         }
       });
     }
