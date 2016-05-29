@@ -209,6 +209,7 @@ var getMissingHours = function(user) {
 };
 
 var getHoursReport = function(user, week) {
+  try {
   var missingHours = [];
   userDB.getAll().then(function(allusers) {
     currentMembers.forEach(function(member) {
@@ -251,6 +252,9 @@ var getHoursReport = function(user, week) {
       }
     });
   });
+} catch(err) {
+  console.log(err);
+}
 };
 
 //  when we first start refresh all slack stuff
@@ -505,7 +509,7 @@ app.get('/get-hours-report', function(req, res) {
   var week = req.query.week;
   if (week && !isNaN(week)) {
     res.send('will do!');
-    console.log('get hours report and using %d', week);
+    console.log('get hours report for week %d', week);
     getHoursReport(week);
   } else {
     res.send('will do!');
