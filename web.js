@@ -209,7 +209,6 @@ var getMissingHours = function(user) {
 };
 
 var getHoursReport = function(week) {
-  try {
   var missingHours = [];
   userDB.getAll().then(function(allusers) {
     currentMembers.forEach(function(member) {
@@ -236,7 +235,9 @@ var getHoursReport = function(week) {
   .then(function() {
     // var admin = ["patxu", "theo", "tim"];
     var admin = ["patxu"];
+    console.log("sending the hours report to %s", admin.join(', '));
     admin.forEach(function(member) {
+      console.log("sending the hours report to %s", member);
       var msg = "Hi " + member + ". The following users havent't submitted hours for week *" + week + "*:\n" + missingHours.join("\n") + "\nHRBot _attack mode_ disengage!";
       var channel = slack.getDMyName(member);
       // if no existing dm then open one
@@ -252,9 +253,6 @@ var getHoursReport = function(week) {
       }
     });
   });
-} catch(err) {
-  console.log(err);
-}
 };
 
 //  when we first start refresh all slack stuff
