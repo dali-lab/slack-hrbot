@@ -504,7 +504,7 @@ app.get('/get-missing-hours', function(req, res) {
 });
 
 app.get('/get-hours-report', function(req, res) {
-  if (moment().day() === 0) {
+  if (moment().day() === 1) {
     var week = req.query.week;
     if (week && !isNaN(week)) {
       res.send('will do!');
@@ -512,8 +512,8 @@ app.get('/get-hours-report', function(req, res) {
       getHoursReport(week);
     } else {
       res.send('will do!');
-      console.log('get hours report and using current week');
-      getHoursReport(currentWeek);
+      console.log('get hours report and using last week');
+      getHoursReport(currentWeek-1);
     }
   } else {
     console.log("get hours report but it's not the right day");
