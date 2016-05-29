@@ -235,10 +235,11 @@ var getHoursReport = function(week) {
   .then(function() {
     // var admin = ["patxu", "theo", "tim"];
     var admin = ["patxu"];
-    console.log("sending the hours report to %s", admin.join(', '));
+    console.log("sending the hours report to admins (%s)", admin.join(', '));
     admin.forEach(function(member) {
       console.log("sending the hours report to %s", member);
       var msg = "Hi " + member + ". The following users havent't submitted hours for week *" + week + "*:\n" + missingHours.join("\n") + "\nHRBot _attack mode_ disengage!";
+      console.log(msg);
       var channel = slack.getDMyName(member);
       // if no existing dm then open one
       if (!channel) {
