@@ -227,7 +227,7 @@ var getHoursReport = function(week) {
 
       var diff = week - lastWeekWorked;
       if (diff > 0) {
-        console.log("adding %s to the missing hours report for not filling out hours for week %s", member, week);
+        console.log("adding %s to the missing hours report for week %d", member, week);
         missingHours.push(member);
       }
     });
@@ -242,14 +242,18 @@ var getHoursReport = function(week) {
       console.log(msg);
       var channel = slack.getDMyName(member);
       // if no existing dm then open one
+      console.log(channel);
       if (!channel) {
+        console.log("no channel");
         var memberid = slack.getUserByName(member).id;
         console.log('getting id for %: %s', member, memberid);
         slack.openDM(slack.getUserByName(member).id, function(dm) {
           channel = slack.getDMByName(member);
+          console.log("sending1");
           channel.send(msg);
         });
       } else {
+          console.log("sending2");
         channel.send(msg);
       }
     });
