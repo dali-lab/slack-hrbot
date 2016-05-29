@@ -237,28 +237,18 @@ var getHoursReport = function(week) {
     var admin = ["patxu"];
     console.log("sending the hours report to admins (%s)", admin.join(', '));
     admin.forEach(function(member) {
-      console.log("sending the hours report to %s", member);
-      var msg = "Hi " + member + ". The following users havent't submitted hours for week *" + week + "*:\n" + missingHours.join("\n") + "\nHRBot _attack mode_ disengage!";
-      console.log(msg);
-      var channel;
-      try {
-        channel = slack.getDMyName(member);
-      } catch(err) {
-        console.log(err);
-      }
+      var msg = "Hi " + member + ". The following users havent't submitted hours for week *" + week + "*:\n" + missingHours.join("\n") + "\n\nHRBot _attack mode_ disengage!";
+      var channel = slack.getDMByName(member);
       // if no existing dm then open one
-      console.log(channel);
       if (!channel) {
         console.log("no channel");
         var memberid = slack.getUserByName(member).id;
         console.log('getting id for %: %s', member, memberid);
         slack.openDM(slack.getUserByName(member).id, function(dm) {
           channel = slack.getDMByName(member);
-          console.log("sending1");
           channel.send(msg);
         });
       } else {
-          console.log("sending2");
         channel.send(msg);
       }
     });
