@@ -208,7 +208,7 @@ var getMissingHours = function(user) {
   });
 };
 
-var getHoursReport = function(user) {
+var getHoursReport = function(user, week) {
   var missingHours = [];
   userDB.getAll().then(function(allusers) {
     currentMembers.forEach(function(member) {
@@ -225,28 +225,31 @@ var getHoursReport = function(user) {
         });
       }
 
-      var diff = currentWeek - lastWeekWorked;
-      if (diff !== 0) {
-        console.log("adding %s to the missing hours report for not filling out hours for week %s", member, currentWeek);
+      var diff = week - lastWeekWorked;
+      if (diff > 0) {
+        console.log("adding %s to the missing hours report for not filling out hours for week %s", member, week);
         missingHours.push(member);
       }
     });
   })
   .then(function() {
-    var member = "patxu";
-    var msg = "Hi " + member+ ". The following users havent't submitted hours for week *" + currentWeek + "*:\n" + missingHours.join("\n");
-    var channel = slack.getDMByName(member);
-    // if no existing dm then open one
-    if (!channel) {
-      var memberid = slack.getUserByName(member).id;
-      console.log('getting id for %: %s', member, memberid);
-      slack.openDM(slack.getUserByName(member).id, function(dm) {
-        channel = slack.getDMByName(member);
+    // var admin = ["patxu", "theo", "tim"];
+    var admin = ["patxu"];
+    admin.forEach(function(member) {
+      var msg = "Hi " + member + ". The following users havent't submitted hours for week *" + week + "*:\n" + missingHours.join("\n") + "\nHRBot _attack mode_ disengage!";
+      var channel = slack.getDMyName(member);
+      // if no existing dm then open one
+      if (!channel) {
+        var memberid = slack.getUserByName(member).id;
+        console.log('getting id for %: %s', member, memberid);
+        slack.openDM(slack.getUserByName(member).id, function(dm) {
+          channel = slack.getDMByName(member);
+          channel.send(msg);
+        });
+      } else {
         channel.send(msg);
-      });
-    } else {
-      channel.send(msg);
-    }
+      }
+    });
   });
 };
 
@@ -490,14 +493,24 @@ app.get('/force-and-ask-hours', function(req, res) {
 // gets users who have not filled out their hours for the past week
 app.get('/get-missing-hours', function(req, res) {
   res.send('will do!');
-  console.log('get missing hours');
-  getMissingHours();
+  if (moment().day() == 0) { // sunday
+    console.log('get missing hours');
+    getMissingHours();
+  } else {
+    console.log('get missing hours but it is not the right day');
+  }
 });
 
 app.get('/get-hours-report', function(req, res) {
-  res.send('will do!');
-  console.log('get hours report');
-  getHoursReport();
+  var week = req.query.week;
+  if (week && !isNaN(week)) {
+    res.send('will do!');
+    console.log('get hours report');
+    getHoursReport(week);
+  } else {
+    res.send('I need a week as a query param');
+    console.log('get hours report but no week supplied');
+  }
 });
 
 // send qr codes to users
