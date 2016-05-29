@@ -34,7 +34,6 @@ var User = {
   // adds and or inserts a new user
   // field: {lastcontact: lastcontact, confirmed: confirmed, amount: amount}
   updateAddUser: function(name, fields) {
-    console.log("updateAddUser");
     return new Promise(function(fulfill, reject) {
       userModel.update({name: name},
         fields,

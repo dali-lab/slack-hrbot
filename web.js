@@ -127,10 +127,10 @@ var refreshSlack = function() {
 };
 
 // asks user for time
-var pokeMember = function(allusers, member, addonMsg) {
+var pokeMember = function(allusers, member, addonMsg, timeoutCheck) {
   console.log('asking hours from: ' + member);
   var timeouttime = moment().subtract(2, 'days');
-  if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
+  if (timeoutCheck && allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
     // do nothing if we've already asked this person recently
     console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
   } else {
@@ -167,7 +167,7 @@ var refreshAndAskHours = function() {
       var msg = "I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
       var i = 1;
       currentMembers.forEach(function(member) {
-        setTimeout(function() {pokeMember(allusers, member, msg);}, i * 2000);
+        setTimeout(function() {pokeMember(allusers, member, msg, true);}, i * 2000);
         i++;
       });
     })
@@ -187,15 +187,11 @@ var getMissingHours = function(user) {
           var lastWeekWorked = 0;
           try {
             lastWeekWorked = allusers[member].lastWeekWorked;
+            if (isNaN(lastWeekWorked)) {
+              throw "lastWeekWorked is NaN";
+            }
           } catch (err) {
             console.log("user doesn't have a lastWeekWorked, adding to db");
-            userDB.updateAddUser(member, {
-              lastWeekWorked: 0
-            });
-          }
-
-          if (isNaN(lastWeekWorked)) {
-            console.log("lastWeekWorked is NaN, adding to db");
             userDB.updateAddUser(member, {
               lastWeekWorked: 0
             });
@@ -204,8 +200,8 @@ var getMissingHours = function(user) {
           var diff = currentWeek - lastWeekWorked;
           if (diff !== 0) {
             console.log("poke %s for not filling out hours for week %s", member, currentWeek);
-            var msg = "Can you please let me know how many hours you worked for this past week (week " + currentWeek + " of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you!";
-            setTimeout(function() {pokeMember(allusers, member, msg);}, i * 2000);
+            var msg = "Can you please let me know how many hours you worked for this past week (week *" + currentWeek + "* of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you.";
+            setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
             i++;
           }
         }
@@ -372,10 +368,10 @@ slack.on('message', function(message) {
       } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
         // if they agree and the user has an unconfirmed amount
         if (contactIsStale || allusers[user.name].amount === undefined) {
-        // if the messages are too old lets just reset
-          channel.send("I've forgotten that we were talking, how much should I put down for hours worked?");
+        // if the messages are too old (2 days) let's just reset
+          channel.send("I've forgotten that we were talking, how much should I put down for hours worked during week *" + currentWeek + "*?");
         } else {
-          // if they confirm and not stale etc then lets record!
+          // if they confirm and not stale etc then let's record!
           spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
           userDB.updateAddUser(user.name, {
             confirmed: true,
