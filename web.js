@@ -208,7 +208,7 @@ var getMissingHours = function(user) {
   });
 };
 
-var getHoursReport = function(user, week) {
+var getHoursReport = function(week) {
   try {
   var missingHours = [];
   userDB.getAll().then(function(allusers) {
