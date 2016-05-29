@@ -504,17 +504,15 @@ app.get('/get-missing-hours', function(req, res) {
 });
 
 app.get('/get-hours-report', function(req, res) {
-  if (moment().day() === 1) {
-    var week = req.query.week;
-    if (week && !isNaN(week)) {
-      res.send('will do!');
-      console.log('get hours report for week %d', week);
-      getHoursReport(week);
-    } else {
-      res.send('will do!');
-      console.log('get hours report and using last week');
-      getHoursReport(currentWeek-1);
-    }
+  var week = req.query.week;
+  if (week && !isNaN(week)) {
+    res.send('will do!');
+    console.log('get hours report for week %d', week);
+    getHoursReport(week);
+  } else if (moment().day() === 1) {
+    res.send('will do!');
+    console.log('get hours report for last week');
+    getHoursReport(currentWeek-1);
   } else {
     console.log("get hours report but it's not the right day");
   }
