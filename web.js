@@ -183,7 +183,6 @@ var getMissingHours = function(user) {
     } else { // bug everyone
       var i = 1;
       currentMembers.forEach(function(member) {
-        if (member == "patxu") {
           var lastWeekWorked = 0;
           try {
             lastWeekWorked = allusers[member].lastWeekWorked;
@@ -199,14 +198,15 @@ var getMissingHours = function(user) {
 
           var diff = currentWeek - lastWeekWorked;
           if (diff !== 0) {
-            console.log("poke %s for not filling out hours for week %s", member, currentWeek);
-            var msg = "Can you please let me know how many hours you worked for this past week (week *" + currentWeek + "* of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you.";
-            setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
-            i++;
+            if (member == "patxu") {
+              console.log("poke %s for not filling out hours for week %s", member, currentWeek);
+              var msg = "Can you please let me know how many hours you worked for this past week (week *" + currentWeek + "* of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you.";
+              setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
+              i++;
+            } else {
+              console.log("messaging %s about hours", member);
+            }
           }
-        } else {
-          console.log("messaging %s about hours", member);
-        }
       });
     }
   });
