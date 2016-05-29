@@ -237,7 +237,7 @@ var getHoursReport = function(week) {
     var admin = ["patxu"];
     console.log("sending the hours report to admins (%s)", admin.join(', '));
     admin.forEach(function(member) {
-      var msg = "Hi " + member + ". The following users havent't submitted hours for week *" + week + "*:\n" + missingHours.join("\n") + "\n\nHRBot _attack mode_ disengage!";
+      var msg = "Hi " + member + ". The following users haven't submitted hours for week *" + week + "*:\n\n" + missingHours.join("\n") + "\n\nHRBot _attack mode_ disengage!";
       var channel = slack.getDMByName(member);
       // if no existing dm then open one
       if (!channel) {
@@ -495,7 +495,7 @@ app.get('/force-and-ask-hours', function(req, res) {
 // gets users who have not filled out their hours for the past week
 app.get('/get-missing-hours', function(req, res) {
   res.send('will do!');
-  if (moment().day() == 0) { // sunday
+  if (moment().day() === 0) { // sunday
     console.log('get missing hours');
     getMissingHours();
   } else {
