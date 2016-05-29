@@ -198,16 +198,54 @@ var getMissingHours = function(user) {
 
           var diff = currentWeek - lastWeekWorked;
           if (diff !== 0) {
-            if (member == "patxu") {
-              console.log("poke %s for not filling out hours for week %s", member, currentWeek);
-              var msg = "Can you please let me know how many hours you worked for this past week (week *" + currentWeek + "* of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you.";
-              setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
-              i++;
-            } else {
-              console.log("messaging %s about hours", member);
-            }
+            console.log("poke %s for not filling out hours for week %s", member, currentWeek);
+            var msg = "Can you please let me know how many hours you worked for this past week (week *" + currentWeek + "* of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you.";
+            setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
+            i++;
           }
       });
+    }
+  });
+};
+
+var getHoursReport = function(user) {
+  var missingHours = [];
+  userDB.getAll().then(function(allusers) {
+    currentMembers.forEach(function(member) {
+      var lastWeekWorked = 0;
+      try {
+        lastWeekWorked = allusers[member].lastWeekWorked;
+        if (isNaN(lastWeekWorked)) {
+          throw "lastWeekWorked is NaN";
+        }
+      } catch (err) {
+        console.log("user doesn't have a lastWeekWorked, adding to db");
+        userDB.updateAddUser(member, {
+          lastWeekWorked: 0
+        });
+      }
+
+      var diff = currentWeek - lastWeekWorked;
+      if (diff !== 0) {
+        console.log("adding %s to the missing hours report for not filling out hours for week %s", member, currentWeek);
+        missingHours.push(member);
+      }
+    });
+  })
+  .then(function() {
+    var member = "patxu";
+    var msg = "Hi " + member+ ". The following users havent't submitted hours for week *" + currentWeek + "*:\n" + missingHours.join("\n");
+    var channel = slack.getDMByName(member);
+    // if no existing dm then open one
+    if (!channel) {
+      var memberid = slack.getUserByName(member).id;
+      console.log('getting id for %: %s', member, memberid);
+      slack.openDM(slack.getUserByName(member).id, function(dm) {
+        channel = slack.getDMByName(member);
+        channel.send(msg);
+      });
+    } else {
+      channel.send(msg);
     }
   });
 };
@@ -454,6 +492,12 @@ app.get('/get-missing-hours', function(req, res) {
   res.send('will do!');
   console.log('get missing hours');
   getMissingHours();
+});
+
+app.get('/get-hours-report', function(req, res) {
+  res.send('will do!');
+  console.log('get hours report');
+  getHoursReport();
 });
 
 // send qr codes to users

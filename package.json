@@ -9,7 +9,8 @@
     "refresh": "curl https://dali-hrbot.herokuapp.com/refresh-and-ask-hours",
     "force": "curl https://dali-hrbot.herokuapp.com/force-and-ask-hours",
     "qr-codes": "curl http://dali-hrbot.herokuapp.com/send-qr-codes",
-    "missing-hours": "curl http://dali-hrbot.herokuapp.com/get-missing-hours"
+    "missing-hours": "curl http://dali-hrbot.herokuapp.com/get-missing-hours",
+    "hours-report": "curl http://dali-hrbot.herokuapp.com/get-hours-report"
   },
   "repository": {
     "type": "git",
