@@ -233,11 +233,11 @@ var getHoursReport = function(week) {
     });
   })
   .then(function() {
-    // var admin = ["patxu", "theo", "tim"];
-    var admin = ["patxu"];
+    var admin = ["patxu", "theo", "tim"];
+    // var admin = ["patxu"];
     console.log("sending the hours report to admins (%s)", admin.join(', '));
     admin.forEach(function(member, index) {
-      var msg = "Hi " + member + ". The following users haven't submitted hours for week *" + week + "*:\n\n" + missingHours.join("\n") + "\n\nThis report was also sent to " + admin.splice(index, 1).join(", ") + ". HRBot _attack mode_ disengage!";
+      var msg = "Hi " + member + ". The following " + missingHours.length + " members haven't submitted hours for week *" + week + "*:\n\n" + missingHours.join("\n") + "\n\nThis report was also sent to " + admin.splice(index, 1).join(", ") + ". HRBot _attack mode_ disengage!";
       var channel = slack.getDMByName(member);
       // if no existing dm then open one
       if (!channel) {
