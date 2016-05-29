@@ -508,8 +508,9 @@ app.get('/get-hours-report', function(req, res) {
     console.log('get hours report');
     getHoursReport(week);
   } else {
-    res.send('I need a week as a query param');
-    console.log('get hours report but no week supplied');
+    res.send('will do!');
+    console.log('get hours report and using current week');
+    getHoursReport(currentWeek);
   }
 });
 
