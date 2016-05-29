@@ -505,7 +505,7 @@ app.get('/get-hours-report', function(req, res) {
   var week = req.query.week;
   if (week && !isNaN(week)) {
     res.send('will do!');
-    console.log('get hours report');
+    console.log('get hours report and using %d', week);
     getHoursReport(week);
   } else {
     res.send('will do!');
