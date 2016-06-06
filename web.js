@@ -235,11 +235,12 @@ var getHoursReport = function(week) {
   })
   .then(function() {
     var admin = ["patxu", "theo", "tim"];
-    // var admin = ["patxu"];
     console.log("sending the hours report to admins (%s)", admin.join(', '));
     admin.forEach(function(member, index) {
-      // todo use filter on admins
-      var msg = "Hi " + member + ". The following " + missingHours.length + " members haven't submitted hours for week *" + week + "*:\n\n" + missingHours.join("\n") + "\n\nThis report was also sent to " + admin.splice(index, 1).join(", ") + ". HRBot _attack mode_ disengage!";
+      var otherAdmins = admins.filter(function(admin) {
+        return admin != member;
+      });
+      var msg = "Hi " + member + ". The following " + missingHours.length + " members haven't submitted hours for week *" + week + "*:\n\n" + missingHours.join("\n") + "\n\nThis report was also sent to " + otherAdmins.join(", ") + ". HRBot _attack mode_ disengage.";
       var channel = slack.getDMByName(member);
       // if no existing dm then open one
       if (!channel) {
@@ -401,6 +402,7 @@ slack.on('message', function(message) {
             amount: amount
           });
           channel.send("Oh! Are you sure you want me to put down *" + amount + "* hours during week *" + currentWeek + "*, yes/no? Most DALI members are limited to 20 hours a week. ");
+          spreadsheets.logUncaught(user.name, text); // lot's of errors w/ this– might as well log
         } else {
           console.log("confirm %s, %d, %d", user.name, currentWeek, amount);
           // otherwise confirm that this is all correct
@@ -426,7 +428,7 @@ slack.on('message', function(message) {
           });
           channel.send("Okeedokee, thanks!\nTo see all your hours this term just ask me to 'show hours'.");
         }
-      } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0) {
+      } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0 || words.indexOf('no.') >= 0) {
         // if they say no lets unset confirmation in case
         userDB.updateAddUser(user.name, {
           confirmed: false
@@ -497,11 +499,11 @@ app.get('/force-and-ask-hours', function(req, res) {
 // gets users who have not filled out their hours for the past week
 app.get('/get-missing-hours', function(req, res) {
   res.send('will do!');
-  if (moment().day() === 0) { // sunday
+  if (moment().day() === 0 && currentWeek <= 10) { // sunday
     console.log('get missing hours');
     getMissingHours();
   } else {
-    console.log('get missing hours but it is not the right day');
+    console.log("get missing hours but it's either not the right day or the right week");
   }
 });
 
@@ -524,11 +526,11 @@ app.get('/get-hours-report', function(req, res) {
 // send qr codes to users
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  if (moment().day() == 3) {
+  if (moment().day() == 3 && currentWeek <= 10) {
     console.log('send-qr-codes and IT\'S WEDNESDAY!');
     qr.prepQRCodeMessages(req.query.user, currentMembers, slack);
   } else {
-    console.log('send-qr-codes but it\'s not the right day!');
+    console.log('send-qr-codes but it\'s either not the right day or the right week!');
   }
 });
 
