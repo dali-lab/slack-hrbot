@@ -514,10 +514,11 @@ app.get('/get-hours-report', function(req, res) {
     console.log('get hours report for week %d', week);
     getHoursReport(week);
   } else if (moment().day() === 1) {
-    refreshConfigs();
     res.send('will do!');
     console.log('get hours report for last week');
-    getHoursReport(currentWeek-1);
+    refreshConfigs().then(function() {
+      getHoursReport(currentWeek-1);
+    });
   } else {
     console.log("get hours report but it's not the right day");
   }
