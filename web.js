@@ -1,6 +1,6 @@
 //  small slackbot that asks users for their hours on a weekly basis
 //  and records the results in a google spreadsheet
-//  @author tim tregubov,  2016
+//  @author tim tregubov and pat xu,  2016
 
 var express = require("express");
 var logfmt = require("logfmt");
@@ -71,6 +71,7 @@ var getOnlineHumansForChannel = function(channel) {
 
 // get configs from spreadsheet
 var refreshConfigs = function() {
+  console.log("refreshing configs");
   return spreadsheets.getHRConfigs().then(function(configs) {
     currentTerm = configs.currentTerm;
     currentWeek = configs.currentWeek;
@@ -109,7 +110,8 @@ var refreshSlack = function() {
     })
     .map(function(human) {
       return human.name;
-    });
+    })
+    .sort();
 
   // get checkInChannel
   checkInChannel = slack.getGroupByName('check-in');
@@ -126,14 +128,14 @@ var refreshSlack = function() {
 };
 
 // asks user for time
-var pokeMember = function(allusers, member) {
-  console.log('about to ask: ' + member);
+var pokeMember = function(allusers, member, addonMsg, timeoutCheck) {
+  console.log('asking hours from: ' + member);
   var timeouttime = moment().subtract(2, 'days');
-  if (allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
+  if (timeoutCheck && allusers[member] && allusers[member].lastcontact.isAfter(timeouttime)) {
     // do nothing if we've already asked this person recently
     console.log('not asking: ' + member + ' cause already asked on ' + allusers[member].lastcontact.format());
   } else {
-    var msg = "Hi " + member + "!  I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
+    var msg = "Hi " + member + "! " + addonMsg;
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
@@ -146,6 +148,9 @@ var pokeMember = function(allusers, member) {
     } else {
       channel.send(msg);
     }
+    userDB.updateAddUser(member, {
+      confirmed: false
+    });
   }
 };
 
@@ -160,15 +165,97 @@ var refreshAndAskHours = function() {
     })
     .then(function(allusers) {
       // loop through users and contact WITH DELAY to prevent slack blocking
+      var msg = "I'm your friendly hr-bot! How many hours did you work this past week (week " + currentWeek + " of " + currentTerm + ")?";
       var i = 1;
       currentMembers.forEach(function(member) {
-        setTimeout(function() {pokeMember(allusers, member);}, i * 2000);
+        setTimeout(function() {pokeMember(allusers, member, msg, true);}, i * 2000);
         i++;
       });
     })
     .catch(function(err) {
       console.log(err);
     });
+};
+
+var getMissingHours = function(user) {
+  userDB.getAll().then(function(allusers) {
+    if (user !== undefined) { // bug just one user
+
+    } else { // bug everyone
+      var i = 1;
+      currentMembers.forEach(function(member) {
+          var lastWeekWorked = 0;
+          try {
+            lastWeekWorked = allusers[member].lastWeekWorked;
+            if (isNaN(lastWeekWorked)) {
+              throw "lastWeekWorked is NaN";
+            }
+          } catch (err) {
+            console.log("user doesn't have a lastWeekWorked, adding to db");
+            userDB.updateAddUser(member, {
+              lastWeekWorked: 0
+            });
+          }
+
+          var diff = currentWeek - lastWeekWorked;
+          if (diff !== 0) {
+            console.log("poke %s for not filling out hours for week %s", member, currentWeek);
+            var msg = "Can you please let me know how many hours you worked for this past week (week *" + currentWeek + "* of " + currentTerm + ")? It's important that we have an idea of how much time you spend on your DALI project each week. This is the last time I will ask you for your hours– after this a human will directly message you.";
+            setTimeout(function() {pokeMember(allusers, member, msg, false);}, i * 2000);
+            i++;
+          }
+      });
+    }
+  });
+};
+
+var getHoursReport = function(week) {
+  var missingHours = [];
+  userDB.getAll().then(function(allusers) {
+    currentMembers.forEach(function(member) {
+      var lastWeekWorked = 0;
+      try {
+        lastWeekWorked = allusers[member].lastWeekWorked;
+        if (isNaN(lastWeekWorked)) {
+          throw "lastWeekWorked is NaN";
+        }
+      } catch (err) {
+        console.log("user doesn't have a lastWeekWorked, adding to db");
+        userDB.updateAddUser(member, {
+          lastWeekWorked: 0
+        });
+      }
+
+      var diff = week - lastWeekWorked;
+      if (diff > 0) {
+        console.log("adding %s to the missing hours report for week %d", member, week);
+        missingHours.push(member);
+      }
+    });
+  })
+  .then(function() {
+    var admin = ["patxu", "theo", "tim"];
+    console.log("sending the hours report to admins (%s)", admin.join(', '));
+    admin.forEach(function(member, index) {
+      var otherAdmins = admins.filter(function(admin) {
+        return admin != member;
+      });
+      var msg = "Hi " + member + ". The following " + missingHours.length + " members haven't submitted hours for week *" + week + "*:\n\n" + missingHours.join("\n") + "\n\nThis report was also sent to " + otherAdmins.join(", ") + ". HRBot _attack mode_ disengage.";
+      var channel = slack.getDMByName(member);
+      // if no existing dm then open one
+      if (!channel) {
+        console.log("no channel");
+        var memberid = slack.getUserByName(member).id;
+        console.log('getting id for %: %s', member, memberid);
+        slack.openDM(slack.getUserByName(member).id, function(dm) {
+          channel = slack.getDMByName(member);
+          channel.send(msg);
+        });
+      } else {
+        channel.send(msg);
+      }
+    });
+  });
 };
 
 //  when we first start refresh all slack stuff
@@ -249,6 +336,10 @@ slack.on('message', function(message) {
         // for the special casae of do not disturb mode just reset anum to nothing
         channel.send('Sleep Tight!');
         anum = "";
+      } else if (text.search(/hey/i) >= 0 || text.search(/hello/i) >= 0 || text.search(/hi/i) >= 0) {
+        channel.send("Hey there! You can tell me how many hours you worked this week, check your past input history ('show hours'), and update previous hours worked.");
+      } else if (text.search(/thanks/i) >= 0) {
+        channel.send("You're welcome!");
       } else if (text.search(/fuck/i) >= 0) {
         channel.send("RUDE.");
       } else if (text.search(/kronos/i) >= 0) {
@@ -264,7 +355,7 @@ slack.on('message', function(message) {
         // show all hours for the term
         spreadsheets.getAllForUser(currentTerm, user.name)
           .then(function(result) {
-            console.log("hours" + result);
+            console.log("hours: " + result);
             channel.send('Your hours for ' + currentTerm + ' are: \n' + result + "\n to edit say:  change week 1 to 12 hours");
           })
           .catch(function(err) {
@@ -281,17 +372,27 @@ slack.on('message', function(message) {
           var altamount = parseFloat(matches[2]);
           var altweek = parseInt(matches[1]);
           console.log('got changes for week: %d with hours %d for user %s', altweek, altamount, user.name);
+          var lastWeekWorked = 0;
+          try {
+            lastWeekWorked = allusers[user.name].lastWeekWorked;
+          } catch (err) {
+            console.log("user doesn't have a lastWeekWorked, adding to db");
+            userDB.updateAddUser(user.name, {
+              lastWeekWorked: 0
+            });
+          }
           userDB.updateAddUser(user.name, {
             lastcontact: moment(),
             confirmed: true,
-            amount: altamount
+            amount: altamount,
+            lastWeekWorked: Math.max(lastWeekWorked, altweek)
           });
           spreadsheets.updateWeekHours(user.name, altamount, altweek, currentTerm);
           channel.send("Ok! Done! You changed week " + altweek + " to " + altamount + " hours.");
         } else if (amount > 60 || amount < 0) {
           console.log('invalid amount: ' + amount);
           // don't allow greater than 60 hours or negative numbers at all ever
-          channel.send("umm..." + amount + "? I doubt it!");
+          channel.send("umm... " + amount + "? I doubt it!");
         } else if (amount > 20) {
           console.log("high amount warning: " + amount);
           // warn users about being over 20 but record in case
@@ -300,7 +401,8 @@ slack.on('message', function(message) {
             confirmed: false,
             amount: amount
           });
-          channel.send("Oh! Most DALI members are limited to 20 hours a week. Are you sure you want me to put down *" + amount + "* hours during week " + currentWeek + ", yes/no?");
+          channel.send("Oh! Are you sure you want me to put down *" + amount + "* hours during week *" + currentWeek + "*, yes/no? Most DALI members are limited to 20 hours a week. ");
+          spreadsheets.logUncaught(user.name, text); // lot's of errors w/ this– might as well log
         } else {
           console.log("confirm %s, %d, %d", user.name, currentWeek, amount);
           // otherwise confirm that this is all correct
@@ -309,34 +411,32 @@ slack.on('message', function(message) {
             confirmed: false,
             amount: amount
           });
-          channel.send("Ok! I'm putting down that you worked *" + amount + "* hours during week " + currentWeek + ", yes/no?");
+          channel.send("Ok! I'm putting down that you worked *" + amount + "* hours during week *" + currentWeek + "*, yes/no?");
         }
         console.log('end processing');
       } else if (words.indexOf('yes') >= 0 || words.indexOf('y') >= 0 || words.indexOf('ok') >= 0 || words.indexOf('yes!') >= 0) {
         // if they agree and the user has an unconfirmed amount
         if (contactIsStale || allusers[user.name].amount === undefined) {
-        // if the messages are too old lets just reset
-          channel.send("I've forgotten that we were talking, how much should I put down for hours worked?");
+        // if the messages are too old (2 days) let's just reset
+          channel.send("I've forgotten that we were talking, how much should I put down for hours worked during week *" + currentWeek + "*?");
         } else {
-          // if they confirm and not stale etc then lets record!
+          // if they confirm and not stale etc then let's record!
           spreadsheets.updateWeekHours(user.name, allusers[user.name].amount, currentWeek, currentTerm);
           userDB.updateAddUser(user.name, {
-            confirmed: true
+            confirmed: true,
+            lastWeekWorked: currentWeek
           });
-          channel.send("Okeedokee, thanks!");
+          channel.send("Okeedokee, thanks!\nTo see all your hours this term just ask me to 'show hours'.");
         }
-      } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0) {
+      } else if (words.indexOf('no') >= 0 || words.indexOf('n') >= 0 || words.indexOf('no.') >= 0) {
         // if they say no lets unset confirmation in case
         userDB.updateAddUser(user.name, {
           confirmed: false
         });
-        channel.send("Ok, so just send me the number please.");
+        channel.send("Ok, so just send me the number please.\nTo see all your hours this term just ask me to 'show hours'.");
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
-      } else if (words.indexOf('lying') >= 0) {
-        // give them some help!
-        channel.send("I'm sorry, I'm trying my best- promise!");
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
@@ -396,14 +496,41 @@ app.get('/force-and-ask-hours', function(req, res) {
   refreshAndAskHours();
 });
 
+// gets users who have not filled out their hours for the past week
+app.get('/get-missing-hours', function(req, res) {
+  res.send('will do!');
+  if (moment().day() === 0 && currentWeek <= 10) { // sunday
+    console.log('get missing hours');
+    getMissingHours();
+  } else {
+    console.log("get missing hours but it's either not the right day or the right week");
+  }
+});
+
+app.get('/get-hours-report', function(req, res) {
+  var week = req.query.week;
+  if (week && !isNaN(week)) {
+    res.send('will do!');
+    console.log('get hours report for week %d', week);
+    getHoursReport(week);
+  } else if (moment().day() === 1) {
+    refreshConfigs();
+    res.send('will do!');
+    console.log('get hours report for last week');
+    getHoursReport(currentWeek-1);
+  } else {
+    console.log("get hours report but it's not the right day");
+  }
+});
+
 // send qr codes to users
 app.get('/send-qr-codes', function(req, res) {
   res.send('will do!');
-  if (moment().day() == 3) {
+  if (moment().day() == 3 && currentWeek <= 10) {
     console.log('send-qr-codes and IT\'S WEDNESDAY!');
     qr.prepQRCodeMessages(req.query.user, currentMembers, slack);
   } else {
-    console.log('send-qr-codes but it\'s not the right day!');
+    console.log('send-qr-codes but it\'s either not the right day or the right week!');
   }
 });
 

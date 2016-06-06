@@ -123,11 +123,11 @@ var Spreadsheets = {
 
       for (var i =0; i < weeks.length; i++) {
         if (row[weeks[i]]) {
-          allweeks += "week " + i + ": " + row[weeks[i]] + ", ";
+          allweeks += "week " + i + ": " + row[weeks[i]] + "\n";
         }
       }
 
-      return allweeks.slice(0, -2);
+      return allweeks.slice(0, -1);
     });
   },
 
@@ -195,13 +195,14 @@ var Spreadsheets = {
   },
 
   // gets the last week that a user had input hours for
+  // NOTE: doesn't work! needs a callback
   lastWeekWorked: function(username, term) {
     var self = this;
+    var weeks = weekKeys();
+    var i = weeks.length - 1;
     this.getSpreadSheet(term).then(function(sheet) {
       return self.getRowByUsername(sheet, username);
     }).then(function(row) {
-      var weeks = weekKeys();
-      var i = weeks.length - 1;
       while (i >= 0 && row[weeks[i]] === '') {
         i--;
       }

@@ -21,7 +21,8 @@ var userSchema = new mongoose.Schema({
   name: String,
   lastcontact: 'Moment',
   confirmed: false,
-  amount: 0
+  amount: 0,
+  lastWeekWorked: 0
 });
 // and the compiled model
 var userModel = mongoose.model('User', userSchema);
@@ -33,7 +34,6 @@ var User = {
   // adds and or inserts a new user
   // field: {lastcontact: lastcontact, confirmed: confirmed, amount: amount}
   updateAddUser: function(name, fields) {
-    console.log("updateAddUser");
     return new Promise(function(fulfill, reject) {
       userModel.update({name: name},
         fields,
