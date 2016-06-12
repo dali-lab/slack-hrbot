@@ -480,11 +480,11 @@ app.get('/', function(req, res) {
 app.get('/refresh-and-ask-hours', function(req, res) {
   res.send('will do!');
   // only asks once a week on saturday
-  if (moment().day() == 6) {
+  if (moment().day() == 6 && currentWeek <= 10) {
     console.log('refresh-and-ask-hours and IT\'S SATURDAY');
     refreshAndAskHours();
   } else {
-    console.log('refresh-and-ask-hours but it\'s not the right day!');
+    console.log('refresh-and-ask-hours but it\'s either not the right day or the right week!');
   }
 });
 
