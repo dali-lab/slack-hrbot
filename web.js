@@ -300,6 +300,8 @@ slack.on('message', function(message) {
       if (moment().day() == 6) {
         refreshAndAskHours();
       }
+    } else if (channel.name == '16w' || channel.name == '16s' || channel.name == '16x' || channel.name == '16f') {
+      // do nothing if contacted on termly channel
     } else if (type == 'message' && user.name == channel.name) {
 
       // direct message if channel and user are the same
@@ -342,6 +344,8 @@ slack.on('message', function(message) {
         channel.send("You're welcome!");
       } else if (text.search(/fuck/i) >= 0) {
         channel.send("RUDE.");
+      } else if (text.search(/is.*week.*\?/i) >= 0) {
+        channel.send("If you are asking what week it is, I think it is week " + currentWeek + ". Already!");
       } else if (text.search(/kronos/i) >= 0) {
         channel.send("I don't integrate with Kronos unfortunately, so you'll still need to fill those out separately.");
       } else if (text.search(/neukom/i) >= 0) {
@@ -437,6 +441,8 @@ slack.on('message', function(message) {
       } else if (words.indexOf('help') >= 0 || words.indexOf('halp') >= 0 || words.indexOf('help!') >= 0) {
         // give them some help!
         channel.send("I can help! Just tell me a number (integer) and I'll put that in for your hours this past week. \n To see all your hours this term just ask me to 'show hours'. ");
+      } else if (text.search(/thank you/i) >= 0 || text.search(/thanks/i) >= 0) {
+        channel.send("You are very welcome! Have a good day!");
       } else {
         // general confusions ensues
         channel.send("What? I only understand numbers or pleas for help.");
