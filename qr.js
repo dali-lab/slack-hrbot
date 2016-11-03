@@ -7,7 +7,7 @@ var token = process.env.SLACK_BOT_TOKEN;
 var slack_upload = new Slack_Upload(token);
 
 // giphy search terms
-var giphy_search = ['hi', 'hello', 'yay', 'happy', 'taylor swift', 'welcome', 'kitten', 'puppy', 'food', 'bunny', 'otter', 'panda'];
+var giphy_search = ['hi', 'hello', 'yay', 'happy', 'cute', 'welcome', 'kitten', 'puppy', 'food', 'bunny', 'otter', 'panda'];
 
 var qr = {
 
@@ -124,7 +124,7 @@ var qr = {
         console.log('Error: ' + err );
       } else {
         if (res.data.length !== 0) {
-          var url = res.data[Math.floor(Math.random() * res.data.length)].url;
+          var url = res.data[Math.floor(Math.random() * res.data.length)].images.fixed_height.url;
           console.log('found giphy url: ' + url);
           channel.send(url);
         } else {
