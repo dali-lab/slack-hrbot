@@ -78,6 +78,20 @@ var refreshConfigs = function() {
   });
 };
 
+// send DM with message to member
+var sendDM = function(member, message) {
+    var channel = slack.getDMByName(member);
+    if (!channel) {
+      var memberid = slack.getUserByName(member).id;
+      console.log('getting id for %s: %s', member, memberid);
+      slack.openDM(memberid, function(dm) {
+        channel = slack.getDMByName(member);
+        channel.send(message);
+      });
+    } else {
+      channel.send(message);
+    }
+};
 
 // get channels we belong in and users and save for later
 var refreshSlack = function() {
@@ -120,16 +134,7 @@ var refreshSlack = function() {
   if (groups.indexOf(currentTerm) == -1) {
     var labAdministrator = "patxu";
     var msg = "Hi " + labAdministrator + ", could you please add me to the " + currentTerm + " channel?";
-    if (!channel) {
-      var memberid = slack.getUserByName(labAdministrator).id;
-      console.log('getting id for %s: %s', labAdministrator, memberid);
-      slack.openDM(memberid, function(dm) {
-        channel = slack.getDMByName(labAdministrator);
-        channel.send(msg);
-      });
-    } else {
-      channel.send(msg);
-    }
+    sendDM(labAdministrator, msg);
   }
 
   var weekday = moment().day();
