@@ -133,7 +133,7 @@ var refreshSlack = function() {
   // make sure we're in the current term's channel
   if (groups.indexOf(currentTerm) == -1) {
     var labAdministrator = "theo";
-    var msg = "Hi " + labAdministrator + ", could you please add me to the " + currentTerm + " channel?";
+    var msg = "Hi " + labAdministrator + ", could you please add me to the " + currentTerm + " channel? Can you also make sure that the DALI Lab Hours spreadsheet contains a \'" + currentTerm + "\' and a \'" + currentTerm + "-check-in\' sheet?";
     sendDM(labAdministrator, msg);
 
     console.log('not a part of the ' + currentTerm + 'channel, so I will contact ' + labAdministrator + ' to get myself added');
