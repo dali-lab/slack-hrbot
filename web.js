@@ -78,6 +78,20 @@ var refreshConfigs = function() {
   });
 };
 
+// send DM with message to member
+var sendDM = function(member, message) {
+    var channel = slack.getDMByName(member);
+    if (!channel) {
+      var memberid = slack.getUserByName(member).id;
+      console.log('getting id for %s: %s', member, memberid);
+      slack.openDM(memberid, function(dm) {
+        channel = slack.getDMByName(member);
+        channel.send(message);
+      });
+    } else {
+      channel.send(message);
+    }
+};
 
 // get channels we belong in and users and save for later
 var refreshSlack = function() {
@@ -116,6 +130,15 @@ var refreshSlack = function() {
   // get checkInChannel
   checkInChannel = slack.getGroupByName('check-in');
 
+  // make sure we're in the current term's channel
+  if (groups.indexOf(currentTerm) == -1) {
+    var labAdministrator = "theo";
+    var msg = "Hi " + labAdministrator + ", could you please add me to the " + currentTerm + " channel?";
+    sendDM(labAdministrator, msg);
+
+    console.log('not a part of the ' + currentTerm + 'channel, so I will contact ' + labAdministrator + ' to get myself added');
+  }
+
   var weekday = moment().day();
 
   console.log('Slack! You are @%s (%s) of %s', slack.self.name, slack.self.id, slack.team.name);
@@ -140,8 +163,8 @@ var pokeMember = function(allusers, member, addonMsg, timeoutCheck) {
     // if no existing dm then open one
     if (!channel) {
       var memberid = slack.getUserByName(member).id;
-      console.log('getting id for %: %s', member, memberid);
-      slack.openDM(slack.getUserByName(member).id, function(dm) {
+      console.log('getting id for %s: %s', member, memberid);
+      slack.openDM(memberid, function(dm) {
         channel = slack.getDMByName(member);
         channel.send(msg);
       });
@@ -246,8 +269,8 @@ var getHoursReport = function(week) {
       if (!channel) {
         console.log("no channel");
         var memberid = slack.getUserByName(member).id;
-        console.log('getting id for %: %s', member, memberid);
-        slack.openDM(slack.getUserByName(member).id, function(dm) {
+        console.log('getting id for %s: %s', member, memberid);
+        slack.openDM(memberid, function(dm) {
           channel = slack.getDMByName(member);
           channel.send(msg);
         });
