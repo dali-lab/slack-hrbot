@@ -323,7 +323,7 @@ slack.on('message', function(message) {
       if (moment().day() == 6) {
         refreshAndAskHours();
       }
-    } else if (channel.name == '16w' || channel.name == '16s' || channel.name == '16x' || channel.name == '16f') {
+    } else if (channel.name == '16w' || channel.name == '16s' || channel.name == '16x' || channel.name == '16f' || channel.name == '17w' || channel.name == '17s' || channel.name == '17x') {
       console.log("ignoring channel name: " + channel.name);
       // do nothing if contacted on termly channel
     } else if (type == 'message' && user.name == channel.name) {
