@@ -15,7 +15,7 @@ var google_creds = {
    "private_key_id": process.env.PRIVATE_KEY_ID,
    "type": process.env.TYPE
  };
-var spreadsheet = new GoogleSpreadsheet(process.env.SPREADSHEET);
+var Spreadsheet = new GoogleSpreadsheet(process.env.SPREADSHEET);
 //var google_creds = require('./dalilab-hrbot-8d7a1f0c4199.json');
 var _ = require('underscore');
 
@@ -25,7 +25,7 @@ var Spreadsheets = {
   getAuth: function() {
     return new Promise(function(fulfill, reject) {
       console.log("getAuth");
-      spreadsheet.useServiceAccountAuth(google_creds, function(err) {
+      Spreadsheet.useServiceAccountAuth(google_creds, function(err) {
         if (err) {
           reject(err);
         } else {
@@ -39,7 +39,7 @@ var Spreadsheets = {
   getSpreadSheet: function(spreadsheetName) {
     console.log("getSpreadSheet: " + spreadsheetName);
     return new Promise(function(fulfill, reject) {
-      spreadsheet.getInfo(function(err, sheet_info) {
+      Spreadsheet.getInfo(function(err, sheet_info) {
         if (err) {
           reject(err);
         } else {
