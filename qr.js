@@ -77,10 +77,10 @@ var qr = {
         }
       } else {
         console.log('sent qr code to %s', member);
+        fs.unlinkSync(filename);
       }
     });
 
-    fs.unlinkSync(filename);
   },
 
   // check a user in from the iOS check in app
