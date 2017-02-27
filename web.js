@@ -162,12 +162,16 @@ var pokeMember = function(allusers, member, addonMsg, timeoutCheck) {
     var channel = slack.getDMByName(member);
     // if no existing dm then open one
     if (!channel) {
-      var memberid = slack.getUserByName(member).id;
       console.log('getting id for %s: %s', member, memberid);
-      slack.openDM(memberid, function(dm) {
-        channel = slack.getDMByName(member);
-        channel.send(msg);
-      });
+      var memberid = slack.getUserByName(member).id;
+      if (!memberid) {
+        slack.openDM(memberid, function(dm) {
+          channel = slack.getDMByName(member);
+          channel.send(msg);
+        });
+      } else {
+        console.log("no id for %s", member);
+      }
     } else {
       channel.send(msg);
     }
